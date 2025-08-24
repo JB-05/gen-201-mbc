@@ -37,30 +37,30 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faq" className="py-20 bg-gradient-futuristic">
+    <section id="faq" className="py-20 bg-black">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-6 tracking-wider">
-            FREQUENTLY ASKED <span className="text-gray-400">QUESTIONS</span>
+            FREQUENTLY ASKED <span className="text-[#928dab]">QUESTIONS</span>
           </h2>
-          <div className="w-24 h-1 bg-white mx-auto mb-8 clip-polygon"></div>
-          <p className="text-gray-300 text-lg">
+          <div className="w-24 h-1 bg-[#7303c0] mx-auto mb-8 clip-polygon"></div>
+          <p className="text-[#928dab] text-lg">
             Got questions? We've got answers. Everything you need to know about GEN 201.
           </p>
         </div>
 
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index} className="bg-black border border-gray-700 clip-polygon overflow-hidden">
+            <div key={index} className="bg-black/30 border border-[#7303c0] clip-polygon overflow-hidden backdrop-blur-sm">
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-900/50 transition-colors duration-200"
+                className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-[#7303c0]/10 transition-colors duration-200"
               >
-                <h3 className="font-orbitron font-bold text-lg pr-4">{faq.question}</h3>
+                <h3 className="font-orbitron font-bold text-lg pr-4 text-[#928dab]">{faq.question}</h3>
                 <div className={`transform transition-transform duration-200 ${openIndex === index ? 'rotate-45' : ''}`}>
                   <div className="w-6 h-6 relative">
-                    <div className="absolute top-1/2 left-1/2 w-4 h-0.5 bg-white transform -translate-x-1/2 -translate-y-1/2"></div>
-                    <div className="absolute top-1/2 left-1/2 w-0.5 h-4 bg-white transform -translate-x-1/2 -translate-y-1/2"></div>
+                    <div className="absolute top-1/2 left-1/2 w-4 h-0.5 bg-[#7303c0] transform -translate-x-1/2 -translate-y-1/2"></div>
+                    <div className="absolute top-1/2 left-1/2 w-0.5 h-4 bg-[#7303c0] transform -translate-x-1/2 -translate-y-1/2"></div>
                   </div>
                 </div>
               </button>
@@ -69,8 +69,8 @@ export default function FAQ() {
                 openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
               }`}>
                 <div className="px-8 pb-6">
-                  <div className="border-t border-gray-700 pt-4">
-                    <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
+                  <div className="border-t border-[#7303c0]/30 pt-4">
+                    <p className="text-[#928dab] leading-relaxed">{faq.answer}</p>
                   </div>
                 </div>
               </div>

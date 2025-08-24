@@ -31,24 +31,24 @@
 @layer base {
   :root {
     --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    --foreground: 267 97% 38%;
     --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
+    --card-foreground: 267 97% 38%;
     --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 10%;
+    --popover-foreground: 267 97% 38%;
+    --primary: 267 97% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 245 14% 61%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 15%;
+    --muted-foreground: 245 14% 61%;
+    --accent: 267 97% 38%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 20%;
+    --border: 267 97% 38%;
     --input: 0 0% 15%;
-    --ring: 0 0% 100%;
+    --ring: 267 97% 38%;
     --radius: 0;
   }
 }
@@ -62,26 +62,42 @@
   }
 }
 
+@layer utilities {
+  .bg-gradient-futuristic {
+    background: linear-gradient(135deg, #000000 0%, #7303c0 50%, #000000 100%);
+  }
+  
+  .text-gradient {
+    background: linear-gradient(to right, #928dab, #7303c0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .border-gradient {
+    border-image: linear-gradient(45deg, #7303c0, #928dab) 1;
+  }
+}
+
 /* Glitch Effect */
 @keyframes glitch {
   0% {
-    text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+    text-shadow: 2px 0 #7303c0, -2px 0 #928dab;
     transform: translate(0);
   }
   20% {
-    text-shadow: -2px 0 #ff0000, 2px 0 #00ff00;
+    text-shadow: -2px 0 #7303c0, 2px 0 #928dab;
     transform: translate(-2px, 2px);
   }
   40% {
-    text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+    text-shadow: 2px 0 #7303c0, -2px 0 #928dab;
     transform: translate(-2px, -2px);
   }
   60% {
-    text-shadow: -2px 0 #ff0000, 2px 0 #00ff00;
+    text-shadow: -2px 0 #7303c0, 2px 0 #928dab;
     transform: translate(2px, 2px);
   }
   80% {
-    text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+    text-shadow: 2px 0 #7303c0, -2px 0 #928dab;
     transform: translate(2px, -2px);
   }
   100% {

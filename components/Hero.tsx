@@ -37,7 +37,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-futuristic relative overflow-hidden">
+    <section id="home" className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-[-10%] scale-110">
@@ -58,8 +58,8 @@ export default function Hero() {
           className="absolute inset-0 animate-[floatGrid_10s_ease-in-out_infinite]" 
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(255, 255, 255, 0.2) 1.5px, transparent 2px),
-              linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 2px, transparent 2px)
+              linear-gradient(to right, rgba(146, 141, 171, 0.2) 1.5px, transparent 2px),
+              linear-gradient(to bottom, rgba(115, 3, 192, 0.2) 2px, transparent 2px)
             `,
             backgroundSize: '50px 50px',
             backdropFilter: 'blur(3px)'
@@ -71,7 +71,7 @@ export default function Hero() {
       <div 
         className="absolute inset-0 opacity-30"
         style={{
-          background: 'linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)',
+          background: 'linear-gradient(45deg, transparent 0%, rgba(115, 3, 192, 0.15) 50%, transparent 100%)',
           backgroundSize: '200% 200%',
           animation: 'gradient 8s ease infinite'
         }}
@@ -80,10 +80,10 @@ export default function Hero() {
       <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
         <div className="mb-8">
           <h1 className="font-orbitron font-black text-6xl md:text-8xl lg:text-9xl mb-4 tracking-wider">
-            GEN <span className="text-gray-400">201</span>
+            GEN <span className="text-[#928dab]">201</span>
           </h1>
           <div className="relative inline-block">
-            <p className="font-rajdhani text-xl md:text-2xl text-gray-300 glitch">
+            <p className="font-rajdhani text-xl md:text-2xl text-[#928dab] glitch">
               CREATING THE NEXT GENERATION
             </p>
           </div>
@@ -92,9 +92,9 @@ export default function Hero() {
         {/* Countdown Timer */}
         <div className="grid grid-cols-4 gap-4 max-w-md mx-auto mb-8">
           {Object.entries(timeLeft).map(([unit, value]) => (
-            <div key={unit} className="bg-gradient-futuristic border border-gray-700 p-4 clip-polygon relative scan-line">
-              <div className="font-orbitron font-bold text-2xl md:text-3xl">{value.toString().padStart(2, '0')}</div>
-              <div className="text-xs text-gray-400 uppercase font-medium">{unit}</div>
+            <div key={unit} className="bg-black/30 border border-[#7303c0] p-4 clip-polygon relative scan-line">
+              <div className="font-orbitron font-bold text-2xl md:text-3xl text-[#928dab]">{value.toString().padStart(2, '0')}</div>
+              <div className="text-xs text-[#7303c0] uppercase font-medium">{unit}</div>
             </div>
           ))}
         </div>
@@ -102,24 +102,24 @@ export default function Hero() {
         <div className="space-y-4">
           <Link
             href="/register"
-            className="inline-block bg-white text-black px-8 py-4 clip-arrow font-orbitron font-bold text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
+            className="inline-block bg-[#7303c0] text-white px-8 py-4 clip-arrow font-orbitron font-bold text-lg hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
           >
             REGISTER NOW
           </Link>
           
           {/* Quick Info Strip */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12 max-w-2xl mx-auto">
-            <div className="bg-black/50 border border-gray-700 p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-sm text-gray-400">DATE</div>
-              <div className="font-medium">OCT 10-11, 2025</div>
+            <div className="bg-black/30 border border-[#7303c0] p-4 clip-polygon">
+              <div className="font-orbitron font-bold text-sm text-[#7303c0]">DATE</div>
+              <div className="font-medium text-[#928dab]">OCT 10-11, 2025</div>
             </div>
-            <div className="bg-black/50 border border-gray-700 p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-sm text-gray-400">VENUE</div>
-              <div className="font-medium">CSE DEPARTMENT</div>
+            <div className="bg-black/30 border border-[#7303c0] p-4 clip-polygon">
+              <div className="font-orbitron font-bold text-sm text-[#7303c0]">VENUE</div>
+              <div className="font-medium text-[#928dab]">CSE DEPARTMENT</div>
             </div>
-            <div className="bg-black/50 border border-gray-700 p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-sm text-gray-400">PRIZES</div>
-              <div className="font-medium">₹50K+ TOTAL</div>
+            <div className="bg-black/30 border border-[#7303c0] p-4 clip-polygon">
+              <div className="font-orbitron font-bold text-sm text-[#7303c0]">PRIZES</div>
+              <div className="font-medium text-[#928dab]">₹50K+ TOTAL</div>
             </div>
           </div>
         </div>

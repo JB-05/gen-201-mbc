@@ -13,10 +13,10 @@ export default function Sponsors() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-6 tracking-wider">
-            POWERED BY <span className="text-gray-400">SPONSORS</span>
+            POWERED BY <span className="text-[#928dab]">SPONSORS</span>
           </h2>
-          <div className="w-24 h-1 bg-white mx-auto mb-8 clip-polygon"></div>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+          <div className="w-24 h-1 bg-[#7303c0] mx-auto mb-8 clip-polygon"></div>
+          <p className="text-[#928dab] text-lg max-w-2xl mx-auto">
             Industry leaders and innovators supporting the next generation of technological breakthroughs.
           </p>
         </div>
@@ -24,27 +24,27 @@ export default function Sponsors() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
           {sponsors.map((sponsor, index) => (
             <div key={index} className="group">
-              <div className="bg-gradient-futuristic border border-gray-700 p-6 clip-polygon hover:border-white transition-all duration-300 relative overflow-hidden">
+              <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-6 clip-polygon hover:border-[#928dab] transition-all duration-300 relative overflow-hidden">
                 <img
                   src={sponsor.logo}
                   alt={sponsor.name}
                   className="w-full h-20 object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#7303c0]/5 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
               </div>
             </div>
           ))}
         </div>
 
         <div className="text-center mt-12">
-          <div className="bg-gradient-futuristic border border-gray-700 p-8 clip-polygon">
-            <h3 className="font-orbitron font-bold text-2xl mb-4">BECOME A SPONSOR</h3>
-            <p className="text-gray-300 mb-6">
+          <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-8 clip-polygon">
+            <h3 className="font-orbitron font-bold text-2xl mb-4 text-[#7303c0]">BECOME A SPONSOR</h3>
+            <p className="text-[#928dab] mb-6">
               Join us in shaping the future. Partner with GEN 201 and connect with brilliant minds.
             </p>
             <a
               href="mailto:sponsors@gen201.com"
-              className="inline-block bg-white text-black px-6 py-3 clip-polygon font-orbitron font-bold hover:bg-gray-200 transition-colors duration-200"
+              className="inline-block bg-[#7303c0] text-white px-6 py-3 clip-polygon font-orbitron font-bold hover:bg-[#928dab] transition-colors duration-200"
             >
               CONTACT US
             </a>

@@ -33,41 +33,41 @@ export default function Timeline() {
   ];
 
   return (
-    <section id="timeline" className="py-20 bg-gradient-futuristic">
+    <section id="timeline" className="py-20 bg-black">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-6 tracking-wider">
-            EVENT <span className="text-gray-400">TIMELINE</span>
+            EVENT <span className="text-[#928dab]">TIMELINE</span>
           </h2>
-          <div className="w-24 h-1 bg-white mx-auto mb-8 clip-polygon"></div>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+          <div className="w-24 h-1 bg-[#7303c0] mx-auto mb-8 clip-polygon"></div>
+          <p className="text-[#928dab] text-lg max-w-2xl mx-auto">
             A carefully orchestrated sequence of events leading to the ultimate coding showdown.
           </p>
         </div>
 
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gradient-to-b from-white via-gray-400 to-white h-full"></div>
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gradient-to-b from-[#7303c0] via-[#928dab] to-[#7303c0] h-full"></div>
           
           <div className="space-y-12">
             {timelineEvents.map((event, index) => (
               <div key={index} className={`flex items-center ${index % 2 === 0 ? '' : 'flex-row-reverse'}`}>
                 <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                  <div className="bg-black border border-gray-700 p-6 clip-polygon relative group hover:border-white transition-all duration-300">
-                    <div className="font-orbitron font-bold text-sm text-gray-400 mb-2">{event.date}</div>
-                    <h3 className="font-orbitron font-bold text-xl mb-3">{event.title}</h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">{event.description}</p>
+                  <div className="bg-black/30 border border-[#7303c0] p-6 clip-polygon relative group hover:border-[#928dab] transition-all duration-300 backdrop-blur-sm">
+                    <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-2">{event.date}</div>
+                    <h3 className="font-orbitron font-bold text-xl mb-3 text-[#928dab]">{event.title}</h3>
+                    <p className="text-[#928dab] text-sm leading-relaxed">{event.description}</p>
                     
                     {/* Status indicator */}
                     <div className={`absolute top-4 ${index % 2 === 0 ? 'left-4' : 'right-4'}`}>
-                      <div className="w-2 h-2 bg-white clip-polygon"></div>
+                      <div className="w-2 h-2 bg-[#7303c0] clip-polygon"></div>
                     </div>
                   </div>
                 </div>
                 
                 {/* Central node */}
                 <div className="relative z-10">
-                  <div className="w-6 h-6 bg-white border-4 border-black clip-polygon"></div>
+                  <div className="w-6 h-6 bg-[#7303c0] border-4 border-black clip-polygon"></div>
                 </div>
                 
                 <div className="w-1/2"></div>
