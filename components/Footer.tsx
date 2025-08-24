@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-[#7303c0]/30 py-12">
+    <footer className="bg-[#0a0a0a] border-t border-[#7303c0]/30 py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
@@ -43,8 +43,20 @@ export default function Footer() {
             <div className="text-[#928dab] text-sm mb-4 md:mb-0">
               © 2025 GEN 201. All rights reserved. Organized by CSE (AI) Department.
             </div>
-            <div className="text-[#928dab] text-sm">
-              Powered by innovation. Built for the future.
+            <div className="flex items-center gap-2 text-[#928dab] text-sm">
+              <span>Designed and developed by</span>
+              <a 
+                href="https://ugenix.in" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-block h-8 transition-transform hover:scale-105 hover:opacity-80"
+              >
+                <img 
+                  src="assets/ugenix.svg"
+                  alt="UgeniX" 
+                  className="h-full w-auto"
+                />
+              </a>
             </div>
           </div>
         </div>

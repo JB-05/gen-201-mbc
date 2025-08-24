@@ -1,6 +1,6 @@
 export default function Contact() {
   return (
-    <section id="contact" className="py-20 bg-black">
+    <section id="contact" className="py-20 bg-black/95">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-6 tracking-wider">
@@ -93,11 +93,14 @@ export default function Contact() {
         {/* Map Embed */}
         <div className="mt-12">
           <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-4 clip-polygon">
-            <div className="aspect-video bg-black/50 flex items-center justify-center">
-              <div className="text-center">
-                <div className="font-orbitron font-bold text-xl mb-2 text-[#7303c0]">LOCATION MAP</div>
-                <div className="text-[#928dab]">Interactive map will be embedded here</div>
-              </div>
+            <div className="aspect-video w-full overflow-hidden">
+              <iframe 
+                width="100%" 
+                height="100%"
+                src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=Mar%20baseilos%20christian%20college%20of%20engineering%20and%20technology,%20Peermade,%20Kuttikkanam,%20Kerala%20685531+(Mar%20Baselios%20Christian%20College)&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+                className="w-full h-full"
+                title="MBCCET Location Map"
+              />
             </div>
           </div>
         </div>
