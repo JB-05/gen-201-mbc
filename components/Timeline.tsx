@@ -68,18 +68,18 @@ export default function Timeline() {
     <section id="timeline" className="py-20 bg-black/95">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-6 tracking-wider">
+          <h2 className="font-orbitron font-black text-3xl md:text-4xl lg:text-5xl mb-4 md:mb-6 tracking-wider">
             EVENT <span className="text-[#928dab]">TIMELINE</span>
           </h2>
-          <div className="w-24 h-1 bg-[#7303c0] mx-auto mb-8 clip-polygon"></div>
-          <p className="text-[#928dab] text-lg max-w-2xl mx-auto">
+          <div className="w-16 md:w-24 h-1 bg-[#7303c0] mx-auto mb-6 md:mb-8 clip-polygon"></div>
+          <p className="text-[#928dab] text-base md:text-lg max-w-2xl mx-auto px-4 md:px-0">
             A carefully orchestrated sequence of events leading to the ultimate coding showdown.
           </p>
         </div>
 
         <div className="relative">
-          {/* Vertical line container */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-[#928dab]/20 h-full overflow-hidden">
+          {/* Vertical line container - Hidden on mobile */}
+          <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 bg-[#928dab]/20 h-full overflow-hidden">
             {/* Animated background */}
             <div 
               className="absolute inset-0 bg-gradient-to-b from-[#7303c0] via-[#DAA520] to-[#7303c0] bg-[length:100%_300%] animate-[flowingLine_3s_linear_infinite]"
@@ -102,7 +102,7 @@ export default function Timeline() {
             />
           </div>
           
-          <div className="space-y-12">
+          <div className="space-y-12 md:space-y-0">
             {timelineEvents.map((event, index) => {
               const status = getEventStatus(event.date, index);
               const isLeft = index % 2 === 0;
@@ -111,12 +111,28 @@ export default function Timeline() {
                 <div 
                   key={index} 
                   className={`
-                    flex items-center ${isLeft ? '' : 'flex-row-reverse'}
+                    flex flex-col md:flex-row items-start md:items-center 
+                    ${isLeft ? '' : 'md:flex-row-reverse'} mb-12 md:mb-0
                     ${status === 'upcoming' ? 'opacity-50' : 'opacity-100'}
-                    transition-all duration-1000
+                    transition-all duration-1000 relative
                   `}
                 >
-                  <div className={`w-1/2 ${isLeft ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
+                  {/* Mobile timeline line */}
+                  <div className="absolute left-[21px] top-[40px] w-1 h-[calc(100%-20px)] bg-[#928dab]/20 md:hidden overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#7303c0] via-[#DAA520] to-[#7303c0] bg-[length:100%_300%] animate-[flowingLine_3s_linear_infinite]" />
+                  </div>
+
+                  {/* Mobile node */}
+                  <div className="absolute left-4 top-6 z-10 md:hidden">
+                    <div className={`
+                      w-6 h-6 border-4 border-black clip-polygon transition-all duration-500
+                      ${status === 'completed' ? 'bg-[#7303c0] scale-125' : 
+                        status === 'active' ? 'bg-[#DAA520] scale-150 animate-pulse' : 
+                        'bg-[#928dab]'}
+                    `} />
+                  </div>
+
+                  <div className={`w-full pl-16 md:pl-0 md:w-1/2 ${isLeft ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'}`}>
                     <div 
                       className={`
                         bg-black/30 border-2 p-6 clip-polygon relative group backdrop-blur-sm
@@ -126,6 +142,16 @@ export default function Timeline() {
                         transition-all duration-500 hover:scale-105
                       `}
                     >
+                      {index === 0 && (
+                        <div className='absolute top-0 left-8'>
+                        <div className="absolute flex items-center gap-1.5 z-0">
+                          <div className="w-2 h-2 rounded-full animate-[livePulse_2s_infinite]" />
+                          <span className="text-red-500 font-orbitron text-sm font-bold animate-[textGlow_2s_infinite]">
+                            LIVE
+                          </span>
+                        </div>
+                        </div>
+                      )}
                       <div className={`
                         font-orbitron font-bold text-sm mb-2
                         ${status === 'completed' ? 'text-[#7303c0]' : 
@@ -150,8 +176,8 @@ export default function Timeline() {
                     </div>
                   </div>
                   
-                  {/* Central node */}
-                  <div className="relative z-10">
+                  {/* Central node - Hidden on mobile */}
+                  <div className="hidden md:block relative z-10">
                     <div className={`
                       w-6 h-6 border-4 border-black clip-polygon transition-all duration-500
                       ${status === 'completed' ? 'bg-[#7303c0] scale-125' : 
@@ -160,7 +186,7 @@ export default function Timeline() {
                     `}></div>
                   </div>
                   
-                  <div className="w-1/2"></div>
+                  <div className="hidden md:block w-1/2"></div>
                 </div>
               );
             })}

@@ -37,7 +37,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
+    <section id="home" className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden pt-16 md:pt-0">
       {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-[-10%] scale-110">
@@ -79,22 +79,22 @@ export default function Hero() {
       
       <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
         <div className="mb-8">
-          <h1 className="font-orbitron font-black text-6xl md:text-8xl lg:text-9xl mb-4 tracking-wider">
+          <h1 className="font-orbitron font-black text-4xl sm:text-6xl md:text-8xl lg:text-9xl mb-2 md:mb-4 tracking-wider">
             GEN <span className="text-[#928dab]">201</span>
           </h1>
           <div className="relative inline-block">
-            <p className="font-rajdhani text-xl md:text-2xl text-[#928dab] glitch">
+            <p className="font-rajdhani text-lg sm:text-xl md:text-2xl text-[#928dab] glitch">
               CREATING THE NEXT GENERATION
             </p>
           </div>
         </div>
 
         {/* Countdown Timer */}
-        <div className="grid grid-cols-4 gap-4 max-w-md mx-auto mb-8">
+        <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-xs sm:max-w-md mx-auto mb-6 md:mb-8">
           {Object.entries(timeLeft).map(([unit, value]) => (
-            <div key={unit} className="bg-black/30 border border-[#7303c0] p-4 clip-polygon relative scan-line">
-              <div className="font-orbitron font-bold text-2xl md:text-3xl text-[#928dab]">{value.toString().padStart(2, '0')}</div>
-              <div className="text-xs text-[#7303c0] uppercase font-medium">{unit}</div>
+            <div key={unit} className="bg-black/30 border border-[#7303c0] p-2 sm:p-4 clip-polygon relative scan-line">
+              <div className="font-orbitron font-bold text-lg sm:text-2xl md:text-3xl text-[#928dab]">{value.toString().padStart(2, '0')}</div>
+              <div className="text-[10px] sm:text-xs text-[#7303c0] uppercase font-medium">{unit}</div>
             </div>
           ))}
         </div>
@@ -102,24 +102,24 @@ export default function Hero() {
         <div className="space-y-4">
           <Link
             href="/register"
-            className="inline-block bg-[#7303c0] text-white px-8 py-4 clip-arrow font-orbitron font-bold text-lg hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
+            className="inline-block bg-[#7303c0] text-white px-6 sm:px-8 py-3 sm:py-4 clip-arrow font-orbitron font-bold text-base sm:text-lg hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
           >
             REGISTER NOW
           </Link>
           
           {/* Quick Info Strip */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12 max-w-2xl mx-auto">
-            <div className="bg-black/30 border border-[#7303c0] p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-sm text-[#7303c0]">DATE</div>
-              <div className="font-medium text-[#928dab]">OCT 10-11, 2025</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-8 sm:mt-12 max-w-2xl mx-auto">
+            <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon">
+              <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">DATE</div>
+              <div className="font-medium text-sm sm:text-base text-[#928dab]">OCT 10-11, 2025</div>
             </div>
-            <div className="bg-black/30 border border-[#7303c0] p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-sm text-[#7303c0]">VENUE</div>
-              <div className="font-medium text-[#928dab]">CSE DEPARTMENT</div>
+            <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon">
+              <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">VENUE</div>
+              <div className="font-medium text-sm sm:text-base text-[#928dab]">CSE DEPARTMENT</div>
             </div>
-            <div className="bg-black/30 border border-[#7303c0] p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-sm text-[#7303c0]">PRIZES</div>
-              <div className="font-medium text-[#928dab]">₹50K+ TOTAL</div>
+            <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon sm:col-span-2 md:col-span-1">
+              <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">PRIZES</div>
+              <div className="font-medium text-sm sm:text-base text-[#928dab]">₹50K+ TOTAL</div>
             </div>
           </div>
         </div>
