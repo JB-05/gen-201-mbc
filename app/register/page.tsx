@@ -1,188 +1,106 @@
-'use client';
-
-import { useState } from 'react';
+import { RegistrationForm } from '@/components/registration/RegistrationForm';
+import { Toaster } from 'sonner';
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
-export default function Register() {
-  const [formData, setFormData] = useState({
-    teamName: '',
-    teamLeader: '',
-    email: '',
-    phone: '',
-    institution: '',
-    members: ['', '', ''],
-    projectIdea: '',
-    technologies: '',
-    experience: ''
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleMemberChange = (index: number, value: string) => {
-    const newMembers = [...formData.members];
-    newMembers[index] = value;
-    setFormData(prev => ({ ...prev, members: newMembers }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
-  };
-
+export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-black text-white py-20">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <Link href="/" className="inline-block font-orbitron font-black text-2xl mb-8 hover:text-gray-300 transition-colors">
-            ← BACK TO GEN <span className="text-gray-400">201</span>
-          </Link>
-          <h1 className="font-orbitron font-black text-4xl md:text-5xl mb-6 tracking-wider">
-            TEAM <span className="text-gray-400">REGISTRATION</span>
+    <main className="min-h-screen bg-black pt-24 pb-16 relative overflow-hidden">
+      {/* Back to Home Button */}
+      <div className="absolute top-8 left-8 z-20">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm border border-[#7303c0] 
+                     rounded-lg text-[#928dab] hover:text-white hover:bg-[#7303c0] transition-all duration-300
+                     hover:scale-105 group"
+        >
+          <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+          <span className="font-orbitron">Back to Home</span>
+        </Link>
+      </div>
+
+      {/* Animated Background Grid */}
+      <div className="absolute inset-0 opacity-20">
+        <div 
+          className="w-full h-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(115, 3, 192, 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(115, 3, 192, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+          }}
+        />
+      </div>
+
+      {/* Radial Gradient Overlay */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(115, 3, 192, 0.15) 0%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.95) 100%)',
+        }}
+      />
+
+      {/* Floating Accent Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-[#7303c0] rounded-full opacity-10 blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-[#928dab] rounded-full opacity-10 blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <Toaster />
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Gradient Flowing Header */}
+        <div className="text-center relative py-8">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-orbitron mb-8 gradient-text">
+            Register for GEN 201
           </h1>
-          <div className="w-24 h-1 bg-white mx-auto mb-8 clip-polygon"></div>
-          <p className="text-gray-300 text-lg">
-            Join the ranks of tomorrow's innovators. Complete your registration to secure your spot in GEN 201.
+        </div>
+
+        {/* Stylized Description */}
+        <div className="relative">
+          <p className="text-center text-[#928dab] mb-12 max-w-2xl mx-auto backdrop-blur-sm py-4 px-6 rounded-lg border border-[#7303c0]/20">
+            Join us in this exciting hackathon! Fill out the form below to register your team.
+            Make sure to provide accurate information for all team members.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-gradient-futuristic border border-gray-700 p-8 clip-polygon">
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <h3 className="font-orbitron font-bold text-xl mb-6">TEAM INFORMATION</h3>
-              <div className="space-y-6">
-                <div>
-                  <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">TEAM NAME</label>
-                  <input
-                    type="text"
-                    name="teamName"
-                    value={formData.teamName}
-                    onChange={handleInputChange}
-                    className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">TEAM LEADER</label>
-                  <input
-                    type="text"
-                    name="teamLeader"
-                    value={formData.teamLeader}
-                    onChange={handleInputChange}
-                    className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">EMAIL</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">PHONE</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">INSTITUTION</label>
-                  <input
-                    type="text"
-                    name="institution"
-                    value={formData.institution}
-                    onChange={handleInputChange}
-                    className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-orbitron font-bold text-xl mb-6">TEAM MEMBERS</h3>
-              <div className="space-y-6">
-                {formData.members.map((member, index) => (
-                  <div key={index}>
-                    <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">
-                      MEMBER {index + 2} {index > 0 && '(OPTIONAL)'}
-                    </label>
-                    <input
-                      type="text"
-                      value={member}
-                      onChange={(e) => handleMemberChange(index, e.target.value)}
-                      className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white"
-                      placeholder="Full Name"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div>
-              <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">PROJECT IDEA</label>
-              <textarea
-                name="projectIdea"
-                value={formData.projectIdea}
-                onChange={handleInputChange}
-                rows={4}
-                className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white resize-none"
-                placeholder="Describe your project idea or the problem you want to solve..."
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">PREFERRED TECHNOLOGIES</label>
-              <input
-                type="text"
-                name="technologies"
-                value={formData.technologies}
-                onChange={handleInputChange}
-                className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white"
-                placeholder="e.g., React, Python, AI/ML, Blockchain..."
-              />
-            </div>
-            <div>
-              <label className="block font-orbitron font-bold text-sm text-gray-400 mb-2">TEAM EXPERIENCE</label>
-              <textarea
-                name="experience"
-                value={formData.experience}
-                onChange={handleInputChange}
-                rows={3}
-                className="w-full bg-black border border-gray-700 p-3 clip-polygon focus:border-white focus:outline-none text-white resize-none"
-                placeholder="Brief overview of your team's technical background and experience..."
-              />
-            </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <button
-              type="submit"
-              className="bg-white text-black px-12 py-4 clip-arrow font-orbitron font-bold text-lg hover:bg-gray-200 transition-colors duration-200"
-            >
-              REGISTER TEAM
-            </button>
-            <p className="text-gray-400 text-sm mt-4">
-              Registration closes on September 20, 2025
-            </p>
-          </div>
-        </form>
+        {/* Form Container with Backdrop Blur */}
+        <div className="relative backdrop-blur-sm bg-black/30 p-6 rounded-lg border border-[#7303c0]/20">
+          <RegistrationForm />
+        </div>
       </div>
-    </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 mt-36 md:mt-48 lg:mt-64">
+        {/* Separator Line with Gap */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-[#7303c0]/30 to-transparent my-8"></div>
+        
+        {/* Footer Content */}
+        <div className="bg-[#0a0a0a]/50 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-[#928dab] text-sm">
+              © {new Date().getFullYear()} GEN 201. All rights reserved.
+            </div>
+            <div className="flex items-center gap-2 text-[#928dab] text-sm">
+              <span>Designed and developed by</span>
+              <a
+                href="https://ugenix.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block h-8 transition-transform hover:scale-105 hover:opacity-80"
+              >
+                <img
+                  src="/assets/ugenix.svg"
+                  alt="UgeniX"
+                  className="h-full w-auto"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+        </div>
+      </footer>
+    </main>
   );
 }
