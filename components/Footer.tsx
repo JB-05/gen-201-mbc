@@ -9,14 +9,14 @@ export default function Footer() {
             </div>
             <p className="text-[#928dab] text-sm leading-relaxed">
               Creating the next generation of technological innovators. 
-              Join us for 48 hours of intense coding, collaboration, and innovation.
+              Join us for 24 hours of intense coding, collaboration, and innovation.
             </p>
           </div>
           
           <div>
             <h3 className="font-orbitron font-bold text-lg mb-4 text-[#7303c0]">QUICK LINKS</h3>
             <div className="space-y-2">
-              {['About', 'Timeline', 'Prizes', 'FAQ', 'Contact'].map((link) => (
+              {['About', 'Timeline', 'Prizes', 'Sponsors', 'FAQ', 'Contact'].map((link) => (
                 <a
                   key={link}
                   href={`#${link.toLowerCase()}`}
@@ -31,9 +31,16 @@ export default function Footer() {
           <div>
             <h3 className="font-orbitron font-bold text-lg mb-4 text-[#7303c0]">CONNECT</h3>
             <div className="space-y-2">
-              <div className="text-[#928dab] text-sm">info@gen201.com</div>
-              <div className="text-[#928dab] text-sm">+91 12345 67890</div>
-              <div className="text-[#928dab] text-sm">CSE (AI) Department</div>
+              <div className="text-[#928dab] text-sm">gen201hackathon@gmail.com</div>
+              <div>Noel Biju :</div>
+              <div className="text-[#928dab] text-sm">+91 88482 58798</div>
+              <div className="flex items-center">
+                <img 
+                  src="assets/deptOfAI.png"
+                  alt="Department of AI"
+                  className="h-32 w-auto transform transition-transform duration-200"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -41,7 +48,7 @@ export default function Footer() {
         <div className="border-t border-[#7303c0]/30 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-[#928dab] text-sm mb-4 md:mb-0">
-              © 2025 GEN 201. All rights reserved. Organized by CSE (AI) Department.
+              © 2025 GEN 201. All rights reserved. Organized by{' Department of AI'}
             </div>
             <div className="flex items-center gap-2 text-[#928dab] text-sm">
               <span>Designed and developed by</span>

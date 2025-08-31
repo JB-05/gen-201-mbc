@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import heroBackground from '@/assets/hero-bg.jpg';
+import NeuralBackground from './NeuralBackground';
 
 export default function Hero() {
   const [timeLeft, setTimeLeft] = useState({
@@ -14,7 +15,7 @@ export default function Hero() {
   });
 
   useEffect(() => {
-    const targetDate = new Date('2025-09-26T00:00:00').getTime();
+    const targetDate = new Date('2025-10-10T00:00:00').getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
@@ -38,19 +39,22 @@ export default function Hero() {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden pt-16 md:pt-0">
+      {/* Neural Network Background */}
+      <NeuralBackground />
+      
       {/* Background Image */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/*<div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-[-10%] scale-110">
           <Image
             src={heroBackground}
             alt="Hero Background"
             fill
-            className="object-cover opacity-20 animate-[zoomInOut_20s_ease-in-out_infinite]"
+            className="object-cover opacity-10 animate-[zoomInOut_20s_ease-in-out_infinite]"
             priority
             quality={100}
           />
         </div>
-      </div>
+      </div>*/}
       
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-25">
@@ -115,7 +119,7 @@ export default function Hero() {
             </div>
             <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon">
               <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">VENUE</div>
-              <div className="font-medium text-sm sm:text-base text-[#928dab]">CSE DEPARTMENT</div>
+              <div className="font-medium text-sm sm:text-base text-[#928dab]">MAIN CAMPUS</div>
             </div>
             <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon sm:col-span-2 md:col-span-1">
               <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">PRIZES</div>

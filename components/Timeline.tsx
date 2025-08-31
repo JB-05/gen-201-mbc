@@ -1,198 +1,279 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Trophy, Users, Code, Zap } from 'lucide-react';
 
-export default function Timeline() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+interface TimelineEvent {
+  id: number;
+  title: string;
+  description: string;
+  time: string;
+  date: string;
+  icon: React.ComponentType<any>;
+  status: 'completed' | 'current' | 'upcoming';
+}
+
+const Timeline: React.FC = () => {
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([
+    {
+      id: 1,
+      title: "REGISTRATION OPENS",
+      description: "Begin your journey. Registration portal goes live.",
+      time: "00:00",
+      date: "SEPT 1",
+      icon: Users,
+      status: 'upcoming'
+    },
+    {
+      id: 2,
+      title: "REGISTRATION CLOSES",
+      description: "Final call for participants. Prepare for evaluation.",
+      time: "23:59",
+      date: "SEPT 20",
+      icon: Calendar,
+      status: 'upcoming'
+    },
+    {
+      id: 3,
+      title: "SHORTLISTING PROCESS",
+      description: "Team evaluation and selection process begins.",
+      time: "12:00",
+      date: "SEPT 25",
+      icon: Users,
+      status: 'upcoming'
+    },
+    {
+      id: 4,
+      title: "TEAMS ANNOUNCEMENT",
+      description: "Selected teams will be announced and notified.",
+      time: "18:00",
+      date: "SEPT 28",
+      icon: Zap,
+      status: 'upcoming'
+    },
+    {
+      id: 5,
+      title: "HACKATHON BEGINS",
+      description: "24 hours of building and innovation starts.",
+      time: "00:00",
+      date: "OCT 10",
+      icon: Code,
+      status: 'upcoming'
+    },
+    {
+      id: 6,
+      title: "SUBMISSION & WINNERS",
+      description: "Final presentations and winner announcements.",
+      time: "23:59",
+      date: "OCT 11",
+      icon: Trophy,
+      status: 'upcoming'
+    }
+  ]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000);
+    const updateEventStatuses = () => {
+      const now = new Date();
+      const year = 2025;
 
-    return () => clearInterval(timer);
+      setTimelineEvents(prevEvents => 
+        prevEvents.map(event => {
+          const [month, day] = event.date.split(' ');
+          const [hours, minutes] = event.time.split(':');
+          const eventDate = new Date(year, 
+            month === 'SEPT' ? 8 : 9, 
+            parseInt(day), 
+            parseInt(hours), 
+            parseInt(minutes)
+          );
+
+          // Event is in the past
+          if (now > eventDate) {
+            return { ...event, status: 'completed' };
+          }
+          
+          // Event is currently happening (within 24 hours)
+          const timeDiff = eventDate.getTime() - now.getTime();
+          const hoursDiff = timeDiff / (1000 * 60 * 60);
+          if (hoursDiff <= 24 && hoursDiff >= 0) {
+            return { ...event, status: 'current' };
+          }
+          
+          // Event is in the future
+          return { ...event, status: 'upcoming' };
+        })
+      );
+    };
+
+    // Update initially
+    updateEventStatuses();
+
+    // Update every minute
+    const interval = setInterval(updateEventStatuses, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  // For demo purposes, we'll use a simulated timeline starting from now
-  const getEventStatus = (eventDate: string, index: number) => {
-    // Demo: Set first event as completed, second as active, rest as upcoming
-    if (index === 0) return 'completed';
-    if (index === 1) return 'active';
-    return 'upcoming';
-  };
-
-  // Calculate progress percentage for the vertical line
-  const calculateProgress = () => {
-    const firstDate = new Date('2025 SEPT 1');
-    const lastDate = new Date('2025 OCT 11');
-    const now = currentDate;
-    const total = lastDate.getTime() - firstDate.getTime();
-    const current = now.getTime() - firstDate.getTime();
-    return Math.max(0, Math.min(100, (current / total) * 100));
-  };
-
-  const timelineEvents = [
-    {
-      date: 'SEPT 1',
-      title: 'REGISTRATION OPENS',
-      description: 'Begin your journey. Registration portal goes live.',
-      status: 'upcoming'
-    },
-    {
-      date: 'SEPT 20',
-      title: 'REGISTRATION CLOSES',
-      description: 'Final call for participants. Prepare for evaluation.',
-      status: 'upcoming'
-    },
-    {
-      date: 'SEPT 25',
-      title: 'SHORTLISTING',
-      description: 'Selected teams receive confirmation and briefing.',
-      status: 'upcoming'
-    },
-    {
-      date: 'OCT 10',
-      title: 'HACKATHON BEGINS',
-      description: '48 hours of intense coding and innovation start.',
-      status: 'upcoming'
-    },
-    {
-      date: 'OCT 11',
-      title: 'SUBMISSION & WINNERS',
-      description: 'Final presentations and winner announcements.',
-      status: 'upcoming'
-    },
-  ];
-
   return (
-    <section id="timeline" className="py-20 bg-black/95">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-orbitron font-black text-3xl md:text-4xl lg:text-5xl mb-4 md:mb-6 tracking-wider">
+    <section className="py-12 md:py-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="font-orbitron font-black text-3xl sm:text-4xl lg:text-5xl mb-3 md:mb-4 tracking-wider">
             EVENT <span className="text-[#928dab]">TIMELINE</span>
           </h2>
           <div className="w-16 md:w-24 h-1 bg-[#7303c0] mx-auto mb-6 md:mb-8 clip-polygon"></div>
-          <p className="text-[#928dab] text-base md:text-lg max-w-2xl mx-auto px-4 md:px-0">
+          <p className="text-base md:text-xl text-gray-400 max-w-2xl mx-auto font-medium px-4">
             A carefully orchestrated sequence of events leading to the ultimate coding showdown.
           </p>
         </div>
 
         <div className="relative">
-          {/* Vertical line container - Hidden on mobile */}
-          <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 bg-[#928dab]/20 h-full overflow-hidden">
-            {/* Animated background */}
-            <div 
-              className="absolute inset-0 bg-gradient-to-b from-[#7303c0] via-[#DAA520] to-[#7303c0] bg-[length:100%_300%] animate-[flowingLine_3s_linear_infinite]"
-            />
-            {/* Progress overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/90" 
-              style={{ 
-                height: `${100 - calculateProgress()}%`,
-                top: `${calculateProgress()}%`,
-                transition: 'all 1000ms ease-in-out'
-              }} 
-            />
-            {/* Glowing effect */}
-            <div 
-              className="absolute w-[3px] blur-sm left-[-1px] bg-gradient-to-b from-[#7303c0] via-[#DAA520] to-[#7303c0] bg-[length:100%_300%] animate-[flowingLine_3s_linear_infinite]"
-              style={{ 
-                height: `${calculateProgress()}%`,
-                transition: 'height 1000ms ease-in-out'
-              }}
-            />
+          {/* Curved Road SVG */}
+          <div className="absolute inset-0 flex justify-center pointer-events-none">
+            <svg 
+              width="200" 
+              height="100%" 
+              viewBox="0 0 200 1600" 
+              className="w-16 sm:w-32 md:w-48 h-full hidden md:block"
+              preserveAspectRatio="xMidYStretch"
+            >
+              <defs>
+                <linearGradient id="roadGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#7303c0" />
+                  <stop offset="50%" stopColor="#5a0296" />
+                  <stop offset="100%" stopColor="#4c0273" />
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <path
+                d="M100 0 Q50 100 100 200 Q150 300 100 400 Q50 500 100 600 Q150 700 100 800 Q50 900 100 1000 Q150 1100 100 1200 Q150 1300 100 1400 Q50 1500 100 1600"
+                stroke="url(#roadGradient)"
+                strokeWidth="14"
+                fill="none"
+                filter="url(#glow)"
+                className="drop-shadow-lg"
+              />
+              <path
+                d="M100 0 Q50 100 100 200 Q150 300 100 400 Q50 500 100 600 Q150 700 100 800 Q50 900 100 1000 Q150 1100 100 1200 Q150 1300 100 1400 Q50 1500 100 1600"
+                stroke="#0f0f0f"
+                strokeWidth="4"
+                fill="none"
+                strokeDasharray="40,20"
+                className="animate-pulse opacity-80"
+              />
+            </svg>
           </div>
-          
-          <div className="space-y-12 md:space-y-0">
+
+          {/* Timeline Events */}
+          <div className="relative z-10 space-y-10 md:space-y-20">
             {timelineEvents.map((event, index) => {
-              const status = getEventStatus(event.date, index);
               const isLeft = index % 2 === 0;
-              
+              const IconComponent = event.icon;
+
               return (
-                <div 
-                  key={index} 
+                <div
+                  key={event.id}
                   className={`
-                    flex flex-col md:flex-row items-start md:items-center 
-                    ${isLeft ? '' : 'md:flex-row-reverse'} mb-12 md:mb-0
-                    ${status === 'upcoming' ? 'opacity-50' : 'opacity-100'}
-                    transition-all duration-1000 relative
+                    flex flex-col md:flex-row items-center relative group
+                    ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}
                   `}
                 >
-                  {/* Mobile timeline line */}
-                  <div className="absolute left-[21px] top-[40px] w-1 h-[calc(100%-20px)] bg-[#928dab]/20 md:hidden overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#7303c0] via-[#DAA520] to-[#7303c0] bg-[length:100%_300%] animate-[flowingLine_3s_linear_infinite]" />
-                  </div>
-
-                  {/* Mobile node */}
-                  <div className="absolute left-4 top-6 z-10 md:hidden">
+                  {/* Timeline Node */}
+                  <div className="relative md:absolute md:left-1/2 transform md:-translate-x-1/2 z-20 mb-6 md:mb-0">
                     <div className={`
-                      w-6 h-6 border-4 border-black clip-polygon transition-all duration-500
-                      ${status === 'completed' ? 'bg-[#7303c0] scale-125' : 
-                        status === 'active' ? 'bg-[#DAA520] scale-150 animate-pulse' : 
-                        'bg-[#928dab]'}
+                      w-12 h-12 md:w-16 md:h-16 flex items-center justify-center border-4 border-black shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-12
+                      ${event.status === 'completed' ? 'bg-gradient-to-br from-[#7303c0] to-[#5a0296]' : 
+                        event.status === 'current' ? 'bg-gradient-to-br from-[#7303c0] to-[#4c0273] animate-pulse shadow-[#7303c0]/50' : 
+                        'bg-gradient-to-br from-gray-800 to-black'}
+                    `}>
+                      <IconComponent className="w-5 h-5 md:w-7 md:h-7 text-white" />
+                    </div>
+                    
+                    {/* Connecting line to content - Desktop */}
+                    <div className={`
+                      hidden md:block absolute top-1/2 w-12 h-1 transition-all duration-300
+                      ${isLeft ? 'right-full' : 'left-full'}
+                      ${event.status === 'completed' ? 'bg-gradient-to-r from-[#7303c0] to-[#5a0296]' : 
+                        event.status === 'current' ? 'bg-gradient-to-r from-[#7303c0] to-[#4c0273]' : 
+                        'bg-gradient-to-r from-gray-700 to-black'}
                     `} />
+
+                    {/* Vertical connecting line - Mobile */}
+                    <div className="md:hidden absolute top-full left-1/2 w-1 h-6 transform -translate-x-1/2 bg-gradient-to-b from-[#7303c0] to-transparent" />
                   </div>
 
-                  <div className={`w-full pl-16 md:pl-0 md:w-1/2 ${isLeft ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'}`}>
-                    <div 
-                      className={`
-                        bg-black/30 border-2 p-6 clip-polygon relative group backdrop-blur-sm
-                        ${status === 'completed' ? 'border-[#7303c0] shadow-[0_0_10px_rgba(115,3,192,0.2)]' : 
-                          status === 'active' ? 'border-[#DAA520] shadow-[0_0_15px_rgba(218,165,32,0.3)]' : 
-                          'border-[#928dab]'}
-                        transition-all duration-500 hover:scale-105
-                      `}
-                    >
-                      {index === 0 && (
-                        <div className='absolute top-0 left-8'>
-                        <div className="absolute flex items-center gap-1.5 z-0">
-                          <div className="w-2 h-2 rounded-full animate-[livePulse_2s_infinite]" />
-                          <span className="text-red-500 font-orbitron text-sm font-bold animate-[textGlow_2s_infinite]">
-                            LIVE
-                          </span>
-                        </div>
-                        </div>
-                      )}
+                  {/* Content Card */}
+                  <div className={`
+                    w-full px-4 md:px-0 md:max-w-md mx-auto md:mx-0 md:w-80 lg:w-96
+                    ${isLeft ? 'md:mr-32 lg:mr-40' : 'md:ml-32 lg:ml-40'}
+                  `}>
+                    <div className={`
+                      bg-black p-4 md:p-6 shadow-2xl hover:shadow-[#7303c0]/30 transition-all duration-300 group-hover:scale-105 border border-gray-900 hover:border-[#7303c0]/60
+                      ${event.status === 'current' ? 'ring-2 ring-[#7303c0] ring-opacity-60 shadow-[#7303c0]/40' : ''}
+                    `}>
+                      {/* Date Badge */}
                       <div className={`
-                        font-orbitron font-bold text-sm mb-2
-                        ${status === 'completed' ? 'text-[#7303c0]' : 
-                          status === 'active' ? 'text-[#DAA520]' : 
-                          'text-[#928dab]'}
+                        inline-block px-3 md:px-4 py-1 md:py-2 text-xs md:text-sm font-bold mb-2 md:mb-3 border tracking-wider
+                        ${event.status === 'completed' ? 'bg-[#7303c0]/20 text-[#7303c0] border-[#7303c0]' : 
+                          event.status === 'current' ? 'bg-[#7303c0]/30 text-white border-[#7303c0]' : 
+                          'bg-gray-900/50 text-gray-500 border-gray-700'}
                       `}>
-                        {event.date}
+                        {event.date}{event.time && ` • ${event.time}`}
                       </div>
-                      <h3 className="font-orbitron font-bold text-xl mb-3 text-[#928dab]">{event.title}</h3>
-                      <p className="text-[#928dab] text-sm leading-relaxed">{event.description}</p>
-                      
-                      {/* Status indicator */}
-                      <div className={`absolute top-4 ${isLeft ? 'left-4' : 'right-4'}`}>
+
+                      {/* Title */}
+                      <h3 className="text-lg md:text-xl font-orbitron font-black text-white mb-2 group-hover:text-[#7303c0] transition-colors duration-200 tracking-wide">
+                        {event.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-sm md:text-base text-gray-400 leading-relaxed font-medium">
+                        {event.description}
+                      </p>
+
+                      {/* Status Indicator */}
+                      <div className="mt-3 md:mt-4 flex items-center text-xs md:text-sm font-bold tracking-wider">
                         <div className={`
-                          w-2 h-2 clip-polygon
-                          ${status === 'completed' ? 'bg-gradient-to-r from-[#7303c0] to-[#7303c0] animate-pulse' : 
-                            status === 'active' ? 'bg-gradient-to-r from-[#DAA520] to-[#DAA520] animate-ping' : 
-                            'bg-[#928dab]'}
-                          bg-[length:200%_100%] animate-[flowingLine_3s_linear_infinite]
-                        `}></div>
+                          w-2 h-2 md:w-3 md:h-3 mr-2
+                          ${event.status === 'completed' ? 'bg-[#7303c0]' : 
+                            event.status === 'current' ? 'bg-[#7303c0] animate-pulse' : 
+                            'bg-gray-600'}
+                        `} />
+                        <span className={`
+                          uppercase
+                          ${event.status === 'completed' ? 'text-[#7303c0]' : 
+                            event.status === 'current' ? 'text-white' : 
+                            'text-gray-500'}
+                        `}>
+                          {event.status}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Central node - Hidden on mobile */}
-                  <div className="hidden md:block relative z-10">
-                    <div className={`
-                      w-6 h-6 border-4 border-black clip-polygon transition-all duration-500
-                      ${status === 'completed' ? 'bg-[#7303c0] scale-125' : 
-                        status === 'active' ? 'bg-[#DAA520] scale-150 animate-[progressPulse_2s_infinite]' : 
-                        'bg-[#928dab] hover:scale-110'}
-                    `}></div>
-                  </div>
-                  
-                  <div className="hidden md:block w-1/2"></div>
                 </div>
               );
             })}
+          </div>
+
+          {/* Bottom decoration */}
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-[#7303c0] to-[#5a0296] flex items-center justify-center shadow-2xl shadow-[#7303c0]/50 border-2 border-[#7303c0]">
+            <Trophy className="w-6 h-6 md:w-8 md:h-8 text-white" />
+          </div>
+
+          {/* Mobile vertical line */}
+          <div className="absolute top-0 bottom-0 left-1/2 w-1 -translate-x-1/2 bg-gradient-to-b from-[#7303c0] to-[#5a0296] md:hidden">
+            <div className="absolute inset-0 opacity-25 bg-gradient-to-b from-transparent via-[#7303c0] to-transparent animate-pulse" />
           </div>
         </div>
       </div>
     </section>
   );
 }
+
+export default Timeline;

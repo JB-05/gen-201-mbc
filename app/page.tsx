@@ -10,16 +10,28 @@ import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen text-white">
       <Navbar />
-      <Hero />
-      <About />
-      <Timeline />
-      <Prizes />
-      <FAQ />
-      <Sponsors />
-      <Contact />
-      <Footer />
+      <Hero /> {/* Black background from component */}
+      <div className="bg-[#0a0a0a]">
+        <About />
+      </div>
+      <div className="bg-black">
+        <Prizes />
+      </div>
+      <div className="bg-[#0a0a0a]">
+        <Timeline />
+      </div>
+      <div className="bg-black">
+        <FAQ />
+      </div>
+      <div className="bg-[#0a0a0a]">
+        <Sponsors />
+      </div>
+      <div className="bg-black">
+        <Contact />
+      </div>
+      <Footer /> {/* Footer has its own background */}
     </main>
   );
 }

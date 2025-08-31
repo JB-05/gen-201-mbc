@@ -21,7 +21,7 @@ export default function Prizes() {
   ];
 
   return (
-    <section id="prizes" className="py-20 bg-[#0a0a0a]">
+    <section id="prizes" className="py-20">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-orbitron font-black text-3xl md:text-4xl lg:text-5xl mb-4 md:mb-6 tracking-wider">

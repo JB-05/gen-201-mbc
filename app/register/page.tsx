@@ -71,9 +71,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 mt-36 md:mt-48 lg:mt-64">
-        {/* Separator Line with Gap */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-[#7303c0]/30 to-transparent my-8"></div>
+      <footer className="relative z-10 mt-3 md:mt-2 lg:mt-4">
         
         {/* Footer Content */}
         <div className="bg-[#0a0a0a]/50 backdrop-blur-sm">

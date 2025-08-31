@@ -20,11 +20,11 @@ export default function Contact() {
                 <div className="space-y-4">
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">LOCATION</div>
-                    <div className="text-[#928dab]">CSE (AI) Department<br />Main Campus, University</div>
+                    <div className="text-[#928dab]">AI Department<br />Main Campus</div>
                   </div>
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">DATE & TIME</div>
-                    <div className="text-[#928dab]">October 10-11, 2025<br />48 Hours Non-stop</div>
+                    <div className="text-[#928dab]">October 10-11, 2025<br />24 Hours Non-stop</div>
                   </div>
                 </div>
               </div>
@@ -34,11 +34,12 @@ export default function Contact() {
                 <div className="space-y-4">
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">EMAIL</div>
-                    <div className="text-[#928dab]">info@gen201.com<br />support@gen201.com</div>
+                    <div className="text-[#928dab]">gen201hackathon@gmail.com</div>
                   </div>
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">PHONE</div>
-                    <div className="text-[#928dab]">+91 12345 67890<br />+91 98765 43210</div>
+                    <div>Noel Biju :</div>
+                    <div className="text-[#928dab]">+91 88482 58798<br />+91 98765 43210</div>
                   </div>
                 </div>
               </div>

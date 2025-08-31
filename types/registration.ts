@@ -1,16 +1,16 @@
-export type TeamMember = {
+export interface TeamMember {
     name: string;
     gender: 'male' | 'female' | 'other';
     grade: '11' | '12';
     phone: string;
     email: string;
     foodPreference?: 'veg' | 'non-veg' | 'none';
-};
+}
 
-export type RegistrationFormData = {
+export interface RegistrationFormData {
     teamName: string;
     school: string;
     district: string;
     teamLead: TeamMember;
     teamMembers: TeamMember[];
-};
+}

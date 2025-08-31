@@ -43,7 +43,7 @@ export default function Sponsors() {
               Join us in shaping the future. Partner with GEN 201 and connect with brilliant minds.
             </p>
             <a
-              href="mailto:sponsors@gen201.com"
+              href="mailto:work.noelbiju@gmail.com"
               className="inline-block bg-[#7303c0] text-white px-6 py-3 clip-polygon font-orbitron font-bold hover:bg-[#928dab] transition-colors duration-200"
             >
               CONTACT US

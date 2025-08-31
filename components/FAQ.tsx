@@ -16,7 +16,7 @@ export default function FAQ() {
     },
     {
       question: 'Do I need to have a team before registering?',
-      answer: 'While having a pre-formed team is preferred, individual participants can also register. We will help connect individuals with suitable teams during the event briefing.'
+      answer: 'Team of minimum two members are required for registration.'
     },
     {
       question: 'What technologies can we use?',
@@ -24,7 +24,7 @@ export default function FAQ() {
     },
     {
       question: 'Will food and accommodation be provided?',
-      answer: 'Meals and refreshments will be provided throughout the 48-hour event. Accommodation arrangements can be made for outstation participants upon request.'
+      answer: 'Meals and refreshments will be provided throughout the 24-hour event. Accommodation arrangements can be made for outstation participants upon request.'
     },
     {
       question: 'What are the judging criteria?',
