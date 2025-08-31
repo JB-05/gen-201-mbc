@@ -29,7 +29,7 @@ export default function Prizes() {
           </h2>
           <div className="w-16 md:w-24 h-1 bg-[#7303c0] mx-auto mb-6 md:mb-8 clip-polygon"></div>
           <p className="text-[#928dab] text-base md:text-lg max-w-2xl mx-auto px-4 md:px-0">
-            ₹50,000+ in total prizes awaiting the most innovative teams. Excellence will be rewarded.
+            ₹50,000+ in total prizes awaiting innovative teams. Excellence will be rewarded.
           </p>
         </div>
 
@@ -102,8 +102,8 @@ export default function Prizes() {
           
           <div className="flex justify-center items-center">
             <div className="bg-black/30 border border-[#7303c0] p-4 md:p-6 clip-polygon backdrop-blur-sm max-w-lg w-full">
-              <h4 className="font-orbitron font-bold text-base md:text-lg mb-2 md:mb-3 text-[#928dab]">TOP 10 TEAMS</h4>
-              <p className="text-[#928dab] text-xs md:text-sm mb-3 md:mb-4">All top 10 teams receive exclusive tech goodies and certificates of participation.</p>
+              <h4 className="font-orbitron font-bold text-base md:text-lg mb-2 md:mb-3 text-[#928dab]">TOP TEAMS</h4>
+              <p className="text-[#928dab] text-xs md:text-sm mb-3 md:mb-4">All top teams certificates of participation.</p>
               <div className="flex items-center text-[#928dab]">
                 <div className="w-2 h-2 bg-[#7303c0] mr-3 clip-polygon"></div>
               </div>

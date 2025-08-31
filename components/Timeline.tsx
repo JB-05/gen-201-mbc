@@ -10,7 +10,7 @@ interface TimelineEvent {
   time: string;
   date: string;
   icon: React.ComponentType<any>;
-  status: 'completed' | 'current' | 'upcoming';
+  status: 'completed' | 'current' | 'upcoming' | 'live';
 }
 
 const Timeline: React.FC = () => {
@@ -18,11 +18,11 @@ const Timeline: React.FC = () => {
     {
       id: 1,
       title: "REGISTRATION OPENS",
-      description: "Begin your journey. Registration portal goes live.",
+      description: "Begin your journey. Registration portal is now live!",
       time: "00:00",
       date: "SEPT 1",
       icon: Users,
-      status: 'upcoming'
+      status: 'live'
     },
     {
       id: 2,
@@ -86,6 +86,15 @@ const Timeline: React.FC = () => {
             parseInt(hours), 
             parseInt(minutes)
           );
+
+          // Special handling for registration status
+          if (event.id === 1) {
+            // Registration is live until the closing date
+            const closingDate = new Date(year, 8, 20, 23, 59); // Sept 20, 23:59
+            if (now < closingDate) {
+              return { ...event, status: 'live' };
+            }
+          }
 
           // Event is in the past
           if (now > eventDate) {
@@ -190,6 +199,7 @@ const Timeline: React.FC = () => {
                       w-12 h-12 md:w-16 md:h-16 flex items-center justify-center border-4 border-black shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-12
                       ${event.status === 'completed' ? 'bg-gradient-to-br from-[#7303c0] to-[#5a0296]' : 
                         event.status === 'current' ? 'bg-gradient-to-br from-[#7303c0] to-[#4c0273] animate-pulse shadow-[#7303c0]/50' : 
+                        event.status === 'live' ? 'bg-gradient-to-br from-green-500 to-green-700 animate-pulse shadow-green-500/50' :
                         'bg-gradient-to-br from-gray-800 to-black'}
                     `}>
                       <IconComponent className="w-5 h-5 md:w-7 md:h-7 text-white" />
@@ -243,12 +253,14 @@ const Timeline: React.FC = () => {
                           w-2 h-2 md:w-3 md:h-3 mr-2
                           ${event.status === 'completed' ? 'bg-[#7303c0]' : 
                             event.status === 'current' ? 'bg-[#7303c0] animate-pulse' : 
+                            event.status === 'live' ? 'bg-green-500 animate-pulse' :
                             'bg-gray-600'}
                         `} />
                         <span className={`
                           uppercase
                           ${event.status === 'completed' ? 'text-[#7303c0]' : 
                             event.status === 'current' ? 'text-white' : 
+                            event.status === 'live' ? 'text-green-500' :
                             'text-gray-500'}
                         `}>
                           {event.status}

@@ -8,7 +8,11 @@ export default function FAQ() {
   const faqs = [
     {
       question: 'Who can participate in GEN 201?',
-      answer: 'GEN 201 is open to all students, professionals, and tech enthusiasts. Teams can consist of 2-4 members from any academic background or professional field.'
+      answer: 'GEN 201 is open to all students of class 11 and 12. Teams can consist of 2-4 members from any academic background are allowed.'
+    },
+    {
+      question: 'Is it necessary to have thrmal insulating clothes?',
+      answer: 'Yes, for you comfort, ensure that you are wearing thermal insulating clothes.'
     },
     {
       question: 'What is the registration process?',

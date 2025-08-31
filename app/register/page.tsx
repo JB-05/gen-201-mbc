@@ -59,8 +59,8 @@ export default function RegisterPage() {
         {/* Stylized Description */}
         <div className="relative">
           <p className="text-center text-[#928dab] mb-12 max-w-2xl mx-auto backdrop-blur-sm py-4 px-6 rounded-lg border border-[#7303c0]/20">
-            Join us in this exciting hackathon! Fill out the form below to register your team.
-            Make sure to provide accurate information for all team members.
+            Registration is now open! Join us in this exciting hackathon by filling out the form below.
+            Don't miss out - secure your team's spot today. Make sure to provide accurate information for all team members.
           </p>
         </div>
 
