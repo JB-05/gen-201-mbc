@@ -84,11 +84,11 @@ export default function Hero() {
       
       <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
         <div className="mb-8">
-          <h1 className="font-orbitron font-black text-4xl sm:text-6xl md:text-8xl lg:text-9xl mb-2 md:mb-4 tracking-wider">
+          <h1 className="font-orbitron font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-2 md:mb-3 tracking-wider">
             GEN <span className="text-[#928dab]">201</span>
           </h1>
           <div className="relative inline-block">
-            <p className="font-rajdhani text-lg sm:text-xl md:text-2xl text-[#928dab] glitch">
+            <p className="font-rajdhani text-base sm:text-lg md:text-xl text-[#928dab] glitch">
               CREATING THE NEXT GENERATION
             </p>
           </div>
@@ -98,8 +98,8 @@ export default function Hero() {
         <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-xs sm:max-w-md mx-auto mb-6 md:mb-8">
           {Object.entries(timeLeft).map(([unit, value]) => (
             <div key={unit} className="bg-black/30 border border-[#7303c0] p-2 sm:p-4 clip-polygon relative scan-line">
-              <div className="font-orbitron font-bold text-lg sm:text-2xl md:text-3xl text-[#928dab]">{value.toString().padStart(2, '0')}</div>
-              <div className="text-[10px] sm:text-xs text-[#7303c0] uppercase font-medium">{unit}</div>
+              <div className="font-orbitron font-bold text-base sm:text-xl md:text-2xl text-[#928dab]">{value.toString().padStart(2, '0')}</div>
+              <div className="text-[8px] sm:text-[10px] text-[#7303c0] uppercase font-medium">{unit}</div>
             </div>
           ))}
         </div>
@@ -113,14 +113,14 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <NavigationLink
                 href="/terms#eligibility"
-                className="bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
+                className="bg-[#7303c0] text-white px-3 sm:px-5 py-1.5 sm:py-2 clip-arrow font-orbitron font-bold text-xs hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
                 variant="button"
               >
                 CHECK ELIGIBILITY
               </NavigationLink>
               <NavigationLink
                 href="/register"
-                className="inline-block bg-[#7303c0] text-white px-6 sm:px-8 py-3 sm:py-4 clip-arrow font-orbitron font-bold text-base sm:text-lg hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 relative animate-pulse-subtle"
+                className="inline-block bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm sm:text-base hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 relative animate-pulse-subtle"
               >
                 REGISTER NOW
                 <span className="absolute inset-0 border-2 border-[#7303c0] clip-arrow animate-ping-slow opacity-75"></span>
@@ -155,16 +155,16 @@ export default function Hero() {
           {/* Quick Info Strip */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-8 sm:mt-12 max-w-2xl mx-auto">
             <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">DATE</div>
-              <div className="font-medium text-sm sm:text-base text-[#928dab]">OCT 10-11, 2025</div>
+              <div className="font-orbitron font-bold text-[10px] sm:text-xs text-[#7303c0]">DATE</div>
+              <div className="font-medium text-xs sm:text-sm text-[#928dab]">OCT 10-11, 2025</div>
             </div>
             <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon">
-              <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">VENUE</div>
-              <div className="font-medium text-sm sm:text-base text-[#928dab]">MAIN CAMPUS</div>
+              <div className="font-orbitron font-bold text-[10px] sm:text-xs text-[#7303c0]">VENUE</div>
+              <div className="font-medium text-xs sm:text-sm text-[#928dab]">MAIN CAMPUS</div>
             </div>
             <div className="bg-black/30 border border-[#7303c0] p-3 sm:p-4 clip-polygon sm:col-span-2 md:col-span-1">
-              <div className="font-orbitron font-bold text-xs sm:text-sm text-[#7303c0]">PRIZES</div>
-              <div className="font-medium text-sm sm:text-base text-[#928dab]">₹50K+ TOTAL</div>
+              <div className="font-orbitron font-bold text-[10px] sm:text-xs text-[#7303c0]">PRIZES</div>
+              <div className="font-medium text-xs sm:text-sm text-[#928dab]">₹50K+ TOTAL</div>
             </div>
           </div>
         </div>

@@ -10,10 +10,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -28,10 +28,16 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-      isScrolled || isMenuOpen ? 'bg-black/90 backdrop-blur-sm border-b border-[#7303c0]' : 'bg-transparent'
-    }`}>
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="fixed top-0 w-full z-50 px-4">
+      <nav className={`
+        mx-auto
+        max-w-7xl
+        transition-all
+        duration-300
+        ${isScrolled ? 'mt-4 bg-black/90 backdrop-blur-sm clip-polygon border border-[#7303c0] shadow-[0_0_20px_rgba(115,3,192,0.3)]' : 'bg-transparent'}
+        ${isMenuOpen && !isScrolled ? 'bg-black/90 backdrop-blur-sm border border-[#7303c0]' : ''}
+      `}>
+      <div className="px-4">
         <div className="flex items-center justify-between h-16">
           <div className="font-orbitron font-black text-xl tracking-wider">
             GEN <span className="text-[#928dab]">201</span>
@@ -95,6 +101,7 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </nav>
+      </nav>
+    </div>
   );
 }
