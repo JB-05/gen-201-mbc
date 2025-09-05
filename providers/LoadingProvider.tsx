@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { LoadingScreen } from '@/components/LoadingScreen';
 
 interface LoadingContextType {
@@ -9,23 +9,21 @@ interface LoadingContextType {
 }
 
 const LoadingContext = createContext<LoadingContextType>({
-  isLoading: false,
+  isLoading: true,
   setIsLoading: () => {},
 });
 
 export const useLoading = () => useContext(LoadingContext);
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
-  const [isLoading, setIsLoadingState] = useState(false);
-
-  const setIsLoading = useCallback((loading: boolean) => {
-    setIsLoadingState(loading);
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
-      {children}
-      {isLoading && <LoadingScreen />}
+      {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
+      <main style={{ visibility: isLoading ? 'hidden' : 'visible' }}>
+        {children}
+      </main>
     </LoadingContext.Provider>
   );
 }

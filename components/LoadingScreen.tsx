@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useLoading } from '@/providers/LoadingProvider';
 
-export function LoadingScreen() {
+interface LoadingScreenProps {
+  onLoadingComplete?: () => void;
+}
+
+export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
   const [progress, setProgress] = useState(0);
   const [loadingText, setLoadingText] = useState('Initializing Systems');
-  const { setIsLoading } = useLoading();
 
   useEffect(() => {
     const loadingTexts = [
@@ -27,18 +29,26 @@ export function LoadingScreen() {
     // Progress animation
     const progressInterval = setInterval(() => {
       setProgress(prev => {
-        if (prev >= 100) {
+        const next = prev + 2;
+        if (next >= 100) {
           clearInterval(progressInterval);
+          clearInterval(textInterval);
+          // Call onLoadingComplete after a short delay to show 100%
+          setTimeout(() => {
+            onLoadingComplete?.();
+          }, 300);
           return 100;
         }
-        return Math.min(prev + 2, 100);
+        return next;
       });
     }, 20);
 
-    // Force complete after max duration
+    // Ensure loading completes within max duration
     const maxDuration = setTimeout(() => {
       setProgress(100);
-      setIsLoading(false);
+      clearInterval(progressInterval);
+      clearInterval(textInterval);
+      onLoadingComplete?.();
     }, 3000);
 
     return () => {
@@ -46,21 +56,10 @@ export function LoadingScreen() {
       clearInterval(progressInterval);
       clearTimeout(maxDuration);
     };
-  }, [setIsLoading]);
-
-  // Auto-hide when progress reaches 100%
-  useEffect(() => {
-    if (progress === 100) {
-      const hideDelay = setTimeout(() => {
-        setIsLoading(false);
-      }, 500); // Short delay to show 100%
-
-      return () => clearTimeout(hideDelay);
-    }
-  }, [progress, setIsLoading]);
+  }, [onLoadingComplete]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black p-4 sm:p-6">
+    <div className="loading-screen fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black p-4 sm:p-6">
       {/* Neural Network Background Effect */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-futuristic opacity-30" />
@@ -97,7 +96,7 @@ export function LoadingScreen() {
         </span>
       </div>
 
-      {/* Hexagon Grid Background - Optimized for mobile */}
+      {/* Hexagon Grid Background */}
       <div className="absolute inset-0 -z-10 opacity-10">
         <svg width="100%" height="100%" className="scale-[1.5] sm:scale-100">
           <pattern
@@ -118,7 +117,7 @@ export function LoadingScreen() {
         </svg>
       </div>
 
-      {/* UgeniX Logo in bottom right - Responsive sizing */}
+      {/* UgeniX Logo in bottom right */}
       <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 z-10">
         <div className="relative w-16 h-16 sm:w-24 sm:h-24 opacity-80 hover:opacity-100 transition-opacity">
           <Image
@@ -131,7 +130,7 @@ export function LoadingScreen() {
         </div>
       </div>
 
-      {/* Mobile-optimized scan line effect */}
+      {/* Scan line effect */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div 
           className="absolute inset-0 bg-gradient-to-b from-transparent via-[#7303c0]/5 to-transparent opacity-20"

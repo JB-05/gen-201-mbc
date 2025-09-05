@@ -1,4 +1,5 @@
 import './globals.css';
+import './preload.css';
 import type { Metadata } from 'next';
 import { Orbitron, Rajdhani } from 'next/font/google';
 import { LoadingProvider } from '@/providers/LoadingProvider';
