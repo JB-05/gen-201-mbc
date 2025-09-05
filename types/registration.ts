@@ -7,10 +7,25 @@ export interface TeamMember {
     foodPreference?: 'veg' | 'non-veg' | 'none';
 }
 
+export interface TeacherVerification {
+    salutation: 'sir' | 'maam';
+    name: string;
+    phone: string;
+}
+
+export interface ProjectDetails {
+    projectName: string;
+    projectField: string;
+    projectDescription: string;
+    termsAccepted: boolean;
+}
+
 export interface RegistrationFormData {
     teamName: string;
     school: string;
     district: string;
     teamLead: TeamMember;
     teamMembers: TeamMember[];
+    teacherVerification: TeacherVerification;
+    projectDetails: ProjectDetails;
 }

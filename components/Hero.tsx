@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import heroBackground from '@/assets/hero-bg.jpg';
 import NeuralBackground from './NeuralBackground';
+import { NavigationLink } from './navigation/NavigationLink';
 
 export default function Hero() {
   const [timeLeft, setTimeLeft] = useState({
@@ -110,19 +111,20 @@ export default function Hero() {
               <span className="text-green-500 text-sm font-medium">Registration Ongoing</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link
+              <NavigationLink
                 href="/terms#eligibility"
-                className="inline-block bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
+                className="bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
+                variant="button"
               >
                 CHECK ELIGIBILITY
-              </Link>
-              <Link
+              </NavigationLink>
+              <NavigationLink
                 href="/register"
                 className="inline-block bg-[#7303c0] text-white px-6 sm:px-8 py-3 sm:py-4 clip-arrow font-orbitron font-bold text-base sm:text-lg hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 relative animate-pulse-subtle"
               >
                 REGISTER NOW
                 <span className="absolute inset-0 border-2 border-[#7303c0] clip-arrow animate-ping-slow opacity-75"></span>
-              </Link>
+              </NavigationLink>
             </div>
           </div>
 

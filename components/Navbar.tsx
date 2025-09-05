@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { NavigationLink } from './navigation/NavigationLink';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,12 +49,13 @@ export default function Navbar() {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#7303c0] transition-all duration-200 group-hover:w-full clip-polygon"></span>
               </Link>
             ))}
-            <Link
+            <NavigationLink
               href="/register"
               className="bg-[#7303c0] text-white px-6 py-2 clip-polygon font-medium hover:bg-[#928dab] transition-colors duration-200"
+              variant="button"
             >
               REGISTER
-            </Link>
+            </NavigationLink>
           </div>
 
           {/* Mobile Menu Button */}
@@ -82,13 +84,14 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-            <Link
+            <NavigationLink
               href="/register"
-              onClick={() => setIsMenuOpen(false)}
               className="block bg-[#7303c0] text-white px-6 py-2 clip-polygon font-medium hover:bg-[#928dab] transition-colors duration-200 text-center mt-4"
+              variant="button"
+              onClick={() => setIsMenuOpen(false)}
             >
               REGISTER
-            </Link>
+            </NavigationLink>
           </div>
         </div>
       </div>

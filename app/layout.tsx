@@ -1,6 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Orbitron, Rajdhani } from 'next/font/google';
+import { LoadingProvider } from '@/providers/LoadingProvider';
+import { NavigationProvider } from '@/providers/NavigationProvider';
 
 const orbitron = Orbitron({ 
   subsets: ['latin'],
@@ -27,7 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${orbitron.variable} ${rajdhani.variable} font-orbitron bg-black text-white`}>
-        {children}
+        <LoadingProvider>
+          <NavigationProvider>
+            {children}
+          </NavigationProvider>
+        </LoadingProvider>
       </body>
     </html>
   );

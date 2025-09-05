@@ -41,7 +41,12 @@ export async function checkTeamNameAvailability(teamName: string): Promise<boole
 
 export async function registerTeam(
     team: TeamInsert,
-    teamMembers: Omit<TeamMemberInsert, 'team_id'>[]
+    teamMembers: Omit<TeamMemberInsert, 'team_id'>[],
+    paymentDetails?: {
+        paymentId: string;
+        orderId: string;
+        signature: string;
+    }
 ): Promise<{ success: boolean; error?: string }> {
     try {
         // Simulate API delay
