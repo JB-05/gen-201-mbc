@@ -1,4 +1,5 @@
 import { loadScript } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 
 declare global {
     interface Window {
@@ -20,18 +21,39 @@ export async function initializePayment(options: PaymentOptions): Promise<{ succ
         // Load Razorpay script
         await loadScript('https://checkout.razorpay.com/v1/checkout.js');
 
-        // In a real app, you would make an API call to your backend to create an order
-        // For demo, we'll create a mock order ID
-        const mockOrderId = 'order_' + Math.random().toString(36).substr(2, 9);
+        // Call your backend API to create a Razorpay order
+        const response = await fetch('/api/payment/create-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                amount: REGISTRATION_FEE * 100, // Amount in paise
+                currency: 'INR',
+                receipt: `receipt_${Date.now()}`,
+                notes: {
+                    teamName: options.teamName,
+                    email: options.email,
+                    phone: options.phone,
+                },
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create payment order');
+        }
+
+        const orderData = await response.json();
 
         return {
             success: true,
-            orderId: mockOrderId,
+            orderId: orderData.id,
         };
     } catch (error) {
+        console.error('Payment initialization error:', error);
         return {
             success: false,
-            error: 'Failed to initialize payment',
+            error: error instanceof Error ? error.message : 'Failed to initialize payment',
         };
     }
 }
@@ -63,7 +85,7 @@ export function createRazorpayInstance(
         },
         modal: {
             ondismiss: () => {
-                onFailure('Payment cancelled by user');
+                onFailure({ message: 'Payment cancelled by user' });
             },
         },
         handler: (response: any) => {
@@ -75,8 +97,109 @@ export function createRazorpayInstance(
 }
 
 export async function verifyPayment(paymentId: string, orderId: string, signature: string) {
-    // In a real app, you would verify the payment with your backend
-    // For demo, we'll simulate a successful verification
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return { success: true };
+    try {
+        // Call your backend API to verify the payment
+        const response = await fetch('/api/payment/verify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                payment_id: paymentId,
+                order_id: orderId,
+                signature: signature,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Payment verification failed');
+        }
+
+        const verificationResult = await response.json();
+        return { success: verificationResult.verified };
+    } catch (error) {
+        console.error('Payment verification error:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Payment verification failed'
+        };
+    }
+}
+
+// Create payment record in database
+export async function createPaymentRecord(
+    teamId: string,
+    orderId: string,
+    paymentId?: string,
+    signature?: string,
+    status: 'pending' | 'completed' | 'failed' = 'pending'
+) {
+    try {
+        const { data, error } = await (supabase as any)
+            .from('payments')
+            .insert([{
+                team_id: teamId,
+                order_id: orderId,
+                payment_id: paymentId,
+                signature: signature,
+                amount: REGISTRATION_FEE * 100, // Amount in paise
+                currency: 'INR',
+                payment_status: status,
+                razorpay_order_id: orderId
+            }])
+            .select()
+            .single();
+
+        if (error) {
+            throw error;
+        }
+
+        return { success: true, payment: data };
+    } catch (error) {
+        console.error('Error creating payment record:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to create payment record'
+        };
+    }
+}
+
+// Update payment status
+export async function updatePaymentStatus(
+    orderId: string,
+    paymentId: string,
+    signature: string,
+    status: 'completed' | 'failed',
+    failureReason?: string
+) {
+    try {
+        const updateData: any = {
+            payment_id: paymentId,
+            signature: signature,
+            payment_status: status,
+        };
+
+        if (failureReason) {
+            updateData.failure_reason = failureReason;
+        }
+
+        const { data, error } = await (supabase as any)
+            .from('payments')
+            .update(updateData)
+            .eq('order_id', orderId)
+            .select()
+            .single();
+
+        if (error) {
+            throw error;
+        }
+
+        return { success: true, payment: data };
+    } catch (error) {
+        console.error('Error updating payment status:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to update payment status'
+        };
+    }
 }

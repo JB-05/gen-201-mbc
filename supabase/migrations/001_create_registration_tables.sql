@@ -1,8 +1,27 @@
--- Create enum types for consistent data
-CREATE TYPE gender_type AS ENUM ('male', 'female', 'other');
-CREATE TYPE grade_type AS ENUM ('11', '12');
-CREATE TYPE food_preference_type AS ENUM ('veg', 'non_veg', 'none');
-CREATE TYPE registration_status_type AS ENUM ('pending', 'shortlisted', 'rejected', 'verified');
+-- Create enum types for consistent data (with IF NOT EXISTS for safety)
+DO $$ BEGIN
+    CREATE TYPE gender_type AS ENUM ('male', 'female', 'other');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE grade_type AS ENUM ('11', '12');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE food_preference_type AS ENUM ('veg', 'non_veg', 'none');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE registration_status_type AS ENUM ('pending', 'shortlisted', 'rejected', 'verified');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

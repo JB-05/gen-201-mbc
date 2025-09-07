@@ -1,5 +1,5 @@
--- Helper function to check if user is admin
-CREATE OR REPLACE FUNCTION auth.is_admin()
+-- Helper function to check if user is admin (in public schema)
+CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
 BEGIN
     RETURN EXISTS (
@@ -25,8 +25,8 @@ CREATE POLICY "Allow reading team names" ON teams
 -- Only admins can update team status
 CREATE POLICY "Enable team updates for admins" ON teams
     FOR UPDATE TO authenticated
-    USING (auth.is_admin())
-    WITH CHECK (auth.is_admin());
+    USING (public.is_admin())
+    WITH CHECK (public.is_admin());
 
 -- RLS Policies for team_members table
 ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
@@ -44,8 +44,8 @@ CREATE POLICY "Allow reading team members" ON team_members
 -- Only admins can update team members
 CREATE POLICY "Enable team member updates for admins" ON team_members
     FOR UPDATE TO authenticated
-    USING (auth.is_admin())
-    WITH CHECK (auth.is_admin());
+    USING (public.is_admin())
+    WITH CHECK (public.is_admin());
 
 -- RLS Policies for admins table
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
@@ -53,8 +53,8 @@ ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 -- Only admins can manage other admins
 CREATE POLICY "Enable admin management" ON admins
     FOR ALL TO authenticated
-    USING (auth.is_admin())
-    WITH CHECK (auth.is_admin());
+    USING (public.is_admin())
+    WITH CHECK (public.is_admin());
 
 -- RLS Policies for team_status_logs table
 ALTER TABLE team_status_logs ENABLE ROW LEVEL SECURITY;
@@ -62,12 +62,12 @@ ALTER TABLE team_status_logs ENABLE ROW LEVEL SECURITY;
 -- Only admins can create status logs
 CREATE POLICY "Enable status log creation for admins" ON team_status_logs
     FOR INSERT TO authenticated
-    WITH CHECK (is_admin(auth.uid()));
+    WITH CHECK (public.is_admin());
 
 -- Only admins can read status logs
 CREATE POLICY "Enable status log viewing for admins" ON team_status_logs
     FOR SELECT TO authenticated
-    USING (is_admin(auth.uid()));
+    USING (public.is_admin());
 
 -- Create function to log team status changes
 CREATE OR REPLACE FUNCTION log_team_status_change()

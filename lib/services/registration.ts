@@ -1,80 +1,175 @@
-// Mock types to maintain type safety
-type TeamInsert = {
-    id?: string;
-    team_name: string;
-    school_name: string;
-    school_district: string;
-    lead_phone: string;
-    lead_email: string;
-    registration_status?: 'pending' | 'shortlisted' | 'rejected' | 'verified';
-    created_at?: string;
-    updated_at?: string;
-};
+import { supabase } from '@/lib/supabase';
+import { Database } from '@/types/supabase';
 
-type TeamMemberInsert = {
-    id?: string;
-    team_id: string;
-    name: string;
-    gender: 'male' | 'female' | 'other';
-    grade: '11' | '12';
-    phone: string;
-    email: string;
-    food_preference?: 'veg' | 'non_veg' | 'none';
-    is_team_lead?: boolean;
-    created_at?: string;
-    updated_at?: string;
-};
-
-// Mock function to simulate delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Mock team name database
-const existingTeamNames = new Set(['Team Alpha', 'Team Beta', 'Team Gamma']);
+type TeamInsert = Database['public']['Tables']['teams']['Insert'];
+type TeamMemberInsert = Database['public']['Tables']['team_members']['Insert'];
+type ProjectDetailsInsert = Database['public']['Tables']['project_details']['Insert'];
+type TeacherVerificationInsert = Database['public']['Tables']['teacher_verifications']['Insert'];
+type PaymentInsert = Database['public']['Tables']['payments']['Insert'];
 
 export async function checkTeamNameAvailability(teamName: string): Promise<boolean> {
-    // Simulate API delay
-    await delay(800);
+    try {
+        const { data, error } = await supabase
+            .from('teams')
+            .select('id')
+            .eq('team_name', teamName)
+            .single();
 
-    // Return true if team name is not in our mock database
-    return !existingTeamNames.has(teamName);
+        if (error && error.code === 'PGRST116') {
+            // No rows returned, team name is available
+            return true;
+        }
+
+        if (error) {
+            console.error('Error checking team name availability:', error);
+            throw error;
+        }
+
+        // Team name exists
+        return false;
+    } catch (error) {
+        console.error('Error in checkTeamNameAvailability:', error);
+        return false;
+    }
 }
 
 export async function registerTeam(
-    team: TeamInsert,
-    teamMembers: Omit<TeamMemberInsert, 'team_id'>[],
+    teamData: {
+        team_name: string;
+        school_name: string;
+        school_district: string;
+        lead_phone: string;
+        lead_email: string;
+    },
+    teamMembers: Array<{
+        name: string;
+        gender: 'male' | 'female' | 'other';
+        grade: '11' | '12';
+        phone: string;
+        email: string;
+        food_preference?: 'veg' | 'non_veg' | 'none';
+        is_team_lead?: boolean;
+    }>,
+    projectDetails: {
+        project_name: string;
+        project_field: string;
+        project_description: string;
+    },
+    teacherVerification: {
+        salutation: 'sir' | 'maam';
+        teacher_name: string;
+        teacher_phone: string;
+    },
     paymentDetails?: {
         paymentId: string;
         orderId: string;
         signature: string;
     }
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; teamId?: string }> {
     try {
-        // Simulate API delay
-        await delay(1500);
+        // Start a transaction by inserting team first
+        const teamRecord: TeamInsert = {
+            team_name: teamData.team_name,
+            school_name: teamData.school_name,
+            school_district: teamData.school_district,
+            lead_phone: teamData.lead_phone,
+            lead_email: teamData.lead_email,
+            registration_status: 'pending',
+            payment_status: paymentDetails ? 'completed' : 'pending'
+        };
 
-        // Simulate validation
-        if (existingTeamNames.has(team.team_name)) {
-            throw new Error('Team name already exists');
+        const { data: team, error: teamError } = await supabase
+            .from('teams')
+            .insert([teamRecord] as any)
+            .select()
+            .single();
+
+        if (teamError) {
+            throw new Error(`Failed to create team: ${teamError.message}`);
         }
 
-        // Simulate successful registration
-        const mockTeamId = 'team_' + Math.random().toString(36).substr(2, 9);
+        const teamId = (team as any).id;
 
-        // Add team to mock database
-        existingTeamNames.add(team.team_name);
+        // Insert team members
+        const membersToInsert: TeamMemberInsert[] = teamMembers.map(member => ({
+            team_id: teamId,
+            name: member.name,
+            gender: member.gender,
+            grade: member.grade,
+            phone: member.phone,
+            email: member.email,
+            food_preference: member.food_preference || 'none',
+            is_team_lead: member.is_team_lead || false
+        }));
 
-        // Log registration data for demonstration
-        console.log('Registration Successful:', {
-            team: { ...team, id: mockTeamId },
-            members: teamMembers.map(member => ({
-                ...member,
-                team_id: mockTeamId,
-                id: 'member_' + Math.random().toString(36).substr(2, 9)
-            }))
-        });
+        const { error: membersError } = await supabase
+            .from('team_members')
+            .insert(membersToInsert as any);
 
-        return { success: true };
+        if (membersError) {
+            // Cleanup: delete the team if members insertion fails
+            await supabase.from('teams').delete().eq('id', teamId);
+            throw new Error(`Failed to add team members: ${membersError.message}`);
+        }
+
+        // Insert project details
+        const projectRecord: ProjectDetailsInsert = {
+            team_id: teamId,
+            project_name: projectDetails.project_name,
+            project_field: projectDetails.project_field,
+            project_description: projectDetails.project_description
+        };
+
+        const { error: projectError } = await supabase
+            .from('project_details')
+            .insert([projectRecord] as any);
+
+        if (projectError) {
+            throw new Error(`Failed to save project details: ${projectError.message}`);
+        }
+
+        // Insert teacher verification
+        const teacherRecord: TeacherVerificationInsert = {
+            team_id: teamId,
+            salutation: teacherVerification.salutation,
+            teacher_name: teacherVerification.teacher_name,
+            teacher_phone: teacherVerification.teacher_phone
+        };
+
+        const { error: teacherError } = await supabase
+            .from('teacher_verifications')
+            .insert([teacherRecord] as any);
+
+        if (teacherError) {
+            throw new Error(`Failed to save teacher verification: ${teacherError.message}`);
+        }
+
+        // Insert payment record if payment details are provided
+        if (paymentDetails) {
+            const paymentRecord: PaymentInsert = {
+                team_id: teamId,
+                order_id: paymentDetails.orderId,
+                payment_id: paymentDetails.paymentId,
+                signature: paymentDetails.signature,
+                amount: 5000, // ₹50 in paise
+                currency: 'INR',
+                payment_status: 'completed',
+                razorpay_order_id: paymentDetails.orderId
+            };
+
+            const { error: paymentError } = await supabase
+                .from('payments')
+                .insert([paymentRecord] as any);
+
+            if (paymentError) {
+                console.error('Failed to save payment details:', paymentError);
+                // Don't fail the registration for payment logging issues
+            }
+        }
+
+        return { success: true, teamId };
     } catch (error) {
+        console.error('Registration error:', error);
         return {
             success: false,
             error: error instanceof Error ? error.message : 'An unknown error occurred'

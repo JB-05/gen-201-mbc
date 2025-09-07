@@ -141,6 +141,16 @@ export function RegistrationForm() {
                 ...data.teamMembers,
               ],
               {
+                project_name: data.projectDetails.projectName,
+                project_field: data.projectDetails.projectField,
+                project_description: data.projectDetails.projectDescription,
+              },
+              {
+                salutation: data.teacherVerification.salutation,
+                teacher_name: data.teacherVerification.name,
+                teacher_phone: data.teacherVerification.phone,
+              },
+              {
                 paymentId: response.razorpay_payment_id,
                 orderId: response.razorpay_order_id,
                 signature: response.razorpay_signature,
