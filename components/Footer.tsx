@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -6,8 +7,14 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
-            <div className="font-orbitron font-black text-2xl mb-4">
-              GEN <span className="text-[#928dab]">201</span>
+            <div className="mb-4">
+              <Image
+                src="/assets/gen201_logo.png"
+                alt="GEN 201 Logo"
+                width={120}
+                height={40}
+                className="h-8 w-auto"
+              />
             </div>
             <p className="text-[#928dab] text-sm leading-relaxed">
               Creating the next generation of technological innovators. 
@@ -93,7 +100,7 @@ export default function Footer() {
                 <img 
                   src="assets/deptOfAI.png"
                   alt="Department of AI"
-                  className="h-32 w-auto transform transition-transform duration-200"
+                  className="h-15 w-auto transform transition-transform duration-200 mt-5"
                 />
               </div>
             </div>

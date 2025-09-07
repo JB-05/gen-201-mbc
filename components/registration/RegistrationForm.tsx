@@ -1,29 +1,39 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { initializePayment, createRazorpayInstance, verifyPayment } from '@/lib/services/payment';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { initializePayment, createRazorpayInstance, verifyPayment, loadRazorpayScript } from '@/lib/services/payment';
 import { TermsModal } from './TermsModal';
-import { checkTeamNameAvailability, registerTeam } from '@/lib/services/registration';
+import { registerTeam } from '@/lib/services/registration';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { CustomInput } from '@/components/ui/custom-input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import type { RegistrationFormData } from '@/types/registration';
 
 // Validation Schema
 const phoneRegex = /^[0-9]{10}$/;
+const normalizePhone = (value: unknown) => {
+  if (typeof value !== 'string') return value as any;
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly.length === 12 && digitsOnly.startsWith('91')) {
+    return digitsOnly.slice(2);
+  }
+  if (digitsOnly.length > 10) {
+    return digitsOnly.slice(-10);
+  }
+  return digitsOnly;
+};
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const memberSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   gender: z.enum(['male', 'female', 'other']),
   grade: z.enum(['11', '12']),
-  phone: z.string().regex(phoneRegex, 'Invalid phone number'),
+  phone: z.preprocess(normalizePhone, z.string().regex(phoneRegex, 'Invalid phone number')),
   email: z.string().regex(emailRegex, 'Invalid email address'),
   foodPreference: z.enum(['veg', 'non-veg', 'none']).optional(),
 });
@@ -33,7 +43,7 @@ const teacherVerificationSchema = z.object({
     required_error: 'Please select a salutation',
   }),
   name: z.string().min(2, 'Teacher name must be at least 2 characters'),
-  phone: z.string().regex(phoneRegex, 'Invalid phone number'),
+  phone: z.preprocess(normalizePhone, z.string().regex(phoneRegex, 'Invalid phone number')),
 });
 
 const projectDetailsSchema = z.object({
@@ -60,6 +70,32 @@ const registrationSchema = z.object({
 export function RegistrationForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+  const [isLoadingRazorpay, setIsLoadingRazorpay] = useState(false);
+
+  useEffect(() => {
+    const loadRazorpaySDK = async () => {
+      if (window.Razorpay) {
+        setIsRazorpayLoaded(true);
+        return;
+      }
+
+      setIsLoadingRazorpay(true);
+      try {
+        await loadRazorpayScript();
+        setIsRazorpayLoaded(true);
+      } catch (error) {
+        console.error('Failed to load Razorpay SDK:', error);
+        toast.error('Failed to load payment system. Please refresh the page or try again later.');
+      } finally {
+        setIsLoadingRazorpay(false);
+      }
+    };
+
+    if (currentStep === 4) {
+      loadRazorpaySDK();
+    }
+  }, [currentStep]);
 
   const {
     register,
@@ -91,10 +127,46 @@ export function RegistrationForm() {
     name: 'teamMembers',
   });
 
+  // Store form data for payment processing
+  const [formDataForPayment, setFormDataForPayment] = useState<RegistrationFormData | null>(null);
+
+  const handlePaymentInitiation = async (data: RegistrationFormData) => {
+    if (!isRazorpayLoaded) {
+      toast.error('Payment system is not ready. Please wait or refresh the page.');
+      return;
+    }
+
+    if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+      toast.error('Payment system is not configured. Please contact support.');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await handlePayment(data);
+    } catch (error: any) {
+      console.error('Payment initiation failed:', error);
+      toast.error(error.message || 'Failed to start payment process. Please try again.');
+    }
+  };
+
   const handlePayment = async (data: RegistrationFormData) => {
+    console.log('handlePayment called with data:', data);
     setIsSubmitting(true);
+    
+    // Check if Razorpay is configured
+    if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+      console.error('Razorpay key not configured');
+      toast.error('Payment system is not configured. Please contact support.');
+      setIsSubmitting(false);
+      return;
+    }
+    
+    console.log('Razorpay key found, initializing payment...');
+    
     try {
       // Initialize payment
+      console.log('Calling initializePayment...');
       const { success, orderId, error } = await initializePayment({
         teamName: data.teamName,
         email: data.teamLead.email,
@@ -106,6 +178,7 @@ export function RegistrationForm() {
       }
 
       // Create Razorpay instance
+      console.log('Creating Razorpay instance with orderId:', orderId);
       const razorpay = createRazorpayInstance(
         orderId,
         {
@@ -158,9 +231,18 @@ export function RegistrationForm() {
             );
 
             if (registrationResult.success) {
-              toast.success('Registration successful! Check your email for confirmation.');
+              // Show success message with more details
+              toast.success(
+                `🎉 Registration successful! Team ID: ${registrationResult.teamId}. Check your email for confirmation.`,
+                { duration: 6000 }
+              );
+              
+              // Reset form and go back to first step
               reset();
               setCurrentStep(1);
+              
+              // Scroll to top
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
               throw new Error(registrationResult.error || 'Registration failed');
             }
@@ -172,13 +254,28 @@ export function RegistrationForm() {
         },
         (error) => {
           // On payment failure
-          toast.error(error.message || 'Payment failed. Please try again.');
+          console.error('Payment failed:', error);
+          let errorMessage = 'Payment failed. Please try again.';
+          
+          if (error.code === 'BAD_REQUEST_ERROR') {
+            errorMessage = 'Invalid payment details. Please check your information.';
+          } else if (error.code === 'GATEWAY_ERROR') {
+            errorMessage = 'Payment gateway error. Please try again later.';
+          } else if (error.code === 'NETWORK_ERROR') {
+            errorMessage = 'Network error. Please check your connection and try again.';
+          } else if (error.description) {
+            errorMessage = error.description;
+          }
+          
+          toast.error(errorMessage);
           setIsSubmitting(false);
         }
       );
 
       // Open Razorpay payment form
+      console.log('Opening Razorpay payment gateway...');
       razorpay.open();
+      console.log('Razorpay.open() called');
     } catch (error: any) {
       toast.error(error.message || 'Failed to process payment. Please try again.');
       setIsSubmitting(false);
@@ -206,42 +303,53 @@ export function RegistrationForm() {
         </div>
 
         <div>
-          <RadioGroup
-            {...register(isTeamLead ? 'teamLead.gender' : `teamMembers.${index}.gender`)}
-            className="flex space-x-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="male" id={`gender-male-${index}`} />
-              <label htmlFor={`gender-male-${index}`}>Male</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="female" id={`gender-female-${index}`} />
-              <label htmlFor={`gender-female-${index}`}>Female</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="other" id={`gender-other-${index}`} />
-              <label htmlFor={`gender-other-${index}`}>Other</label>
-            </div>
-          </RadioGroup>
+          <Controller
+            name={isTeamLead ? 'teamLead.gender' : `teamMembers.${index}.gender`}
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="male" id={`gender-male-${index}`} />
+                  <label htmlFor={`gender-male-${index}`}>Male</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="female" id={`gender-female-${index}`} />
+                  <label htmlFor={`gender-female-${index}`}>Female</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="other" id={`gender-other-${index}`} />
+                  <label htmlFor={`gender-other-${index}`}>Other</label>
+                </div>
+              </RadioGroup>
+            )}
+          />
         </div>
 
         <div>
-          <div className="flex space-x-4">
-            <label className="flex items-center space-x-2">
-              <Checkbox
-                {...register(isTeamLead ? 'teamLead.grade' : `teamMembers.${index}.grade`)}
-                value="11"
-              />
-              <span>Grade 11</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <Checkbox
-                {...register(isTeamLead ? 'teamLead.grade' : `teamMembers.${index}.grade`)}
-                value="12"
-              />
-              <span>Grade 12</span>
-            </label>
-          </div>
+          <Controller
+            name={isTeamLead ? 'teamLead.grade' : `teamMembers.${index}.grade`}
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="11" id={`grade-11-${index}`} />
+                  <label htmlFor={`grade-11-${index}`}>Grade 11</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="12" id={`grade-12-${index}`} />
+                  <label htmlFor={`grade-12-${index}`}>Grade 12</label>
+                </div>
+              </RadioGroup>
+            )}
+          />
         </div>
 
         <div>
@@ -249,10 +357,17 @@ export function RegistrationForm() {
             {...register(isTeamLead ? 'teamLead.phone' : `teamMembers.${index}.phone`)}
             placeholder="WhatsApp Number"
             type="tel"
-            pattern="[0-9]{10}"
+            inputMode="numeric"
             className="bg-black/50 border-[#7303c0] text-white"
             autoComplete="tel"
           />
+          {isTeamLead
+            ? errors?.teamLead?.phone && (
+                <span className="text-red-500 text-sm">{errors.teamLead.phone.message as string}</span>
+              )
+            : errors?.teamMembers?.[index]?.phone && (
+                <span className="text-red-500 text-sm">{errors?.teamMembers?.[index]?.phone?.message as unknown as string}</span>
+              )}
         </div>
 
         <div>
@@ -263,33 +378,60 @@ export function RegistrationForm() {
             className="bg-black/50 border-[#7303c0] text-white"
             autoComplete="email"
           />
+          {isTeamLead
+            ? errors?.teamLead?.email && (
+                <span className="text-red-500 text-sm">{errors.teamLead.email.message as string}</span>
+              )
+            : errors?.teamMembers?.[index]?.email && (
+                <span className="text-red-500 text-sm">{errors?.teamMembers?.[index]?.email?.message as unknown as string}</span>
+              )}
         </div>
 
         <div>
-          <RadioGroup
-            {...register(isTeamLead ? 'teamLead.foodPreference' : `teamMembers.${index}.foodPreference`)}
-            className="flex space-x-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="veg" id={`food-veg-${index}`} />
-              <label htmlFor={`food-veg-${index}`}>Vegetarian</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="non-veg" id={`food-nonveg-${index}`} />
-              <label htmlFor={`food-nonveg-${index}`}>Non-Vegetarian</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="none" id={`food-none-${index}`} />
-              <label htmlFor={`food-none-${index}`}>No Food Required</label>
-            </div>
-          </RadioGroup>
+          <Controller
+            name={isTeamLead ? 'teamLead.foodPreference' : `teamMembers.${index}.foodPreference`}
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="veg" id={`food-veg-${index}`} />
+                  <label htmlFor={`food-veg-${index}`}>Vegetarian</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="non-veg" id={`food-nonveg-${index}`} />
+                  <label htmlFor={`food-nonveg-${index}`}>Non-Vegetarian</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="none" id={`food-none-${index}`} />
+                  <label htmlFor={`food-none-${index}`}>No Food Required</label>
+                </div>
+              </RadioGroup>
+            )}
+          />
         </div>
       </div>
     </div>
   );
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="max-w-4xl mx-auto space-y-8 p-4">
+    <form onSubmit={handleSubmit(
+      async (data) => {
+        if (currentStep === 4) {
+          await handlePaymentInitiation(data);
+        } else {
+          setCurrentStep(currentStep + 1);
+        }
+      },
+      (errors) => {
+        console.error('Form validation failed:', errors);
+        toast.error('Please check the form for errors.');
+      }
+    )} noValidate className="max-w-4xl mx-auto space-y-8 p-4">
+      <fieldset disabled={isSubmitting} className="space-y-8">
       {/* Step 1: Team Details */}
       <div className={`space-y-6 ${currentStep !== 1 && 'hidden'}`}>
         <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-6 clip-polygon">
@@ -340,19 +482,26 @@ export function RegistrationForm() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <RadioGroup
-                {...register('teacherVerification.salutation')}
-                className="flex space-x-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="sir" id="salutation-sir" />
-                  <label htmlFor="salutation-sir">Sir</label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="maam" id="salutation-maam" />
-                  <label htmlFor="salutation-maam">Ma'am</label>
-                </div>
-              </RadioGroup>
+              <Controller
+                name={'teacherVerification.salutation'}
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    className="flex space-x-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="sir" id="salutation-sir" />
+                      <label htmlFor="salutation-sir">Sir</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="maam" id="salutation-maam" />
+                      <label htmlFor="salutation-maam">Ma'am</label>
+                    </div>
+                  </RadioGroup>
+                )}
+              />
               {errors?.teacherVerification?.salutation && (
                 <span className="text-red-500 text-sm">{errors.teacherVerification.salutation.message}</span>
               )}
@@ -375,7 +524,7 @@ export function RegistrationForm() {
                 {...register('teacherVerification.phone')}
                 placeholder="Teacher's Phone Number"
                 type="tel"
-                pattern="[0-9]{10}"
+                inputMode="numeric"
                 className="bg-black/50 border-[#7303c0] text-white"
               />
               {errors?.teacherVerification?.phone && (
@@ -544,16 +693,32 @@ export function RegistrationForm() {
             Back
           </Button>
           <Button
-            type="button"
-            disabled={isSubmitting || !watch('projectDetails.termsAccepted')}
-            onClick={handleSubmit(handlePayment)}
+            type="submit"
+            disabled={isSubmitting || !watch('projectDetails.termsAccepted') || isLoadingRazorpay || !isRazorpayLoaded}
             className="bg-[#7303c0] hover:bg-[#928dab] text-white flex items-center space-x-2"
           >
-            <span>{isSubmitting ? 'Processing...' : 'Pay & Register'}</span>
-            <span className="text-sm">₹50</span>
+            <span>
+              {isLoadingRazorpay ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Loading Payment System...
+                </div>
+              ) : isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Processing Payment...
+                </div>
+              ) : !isRazorpayLoaded ? (
+                'Payment System Not Ready'
+              ) : (
+                'Pay ₹50 & Register'
+              )}
+            </span>
           </Button>
         </div>
       </div>
-    </form>
+      </fieldset>
+          </form>
   );
 }
+

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { NavigationLink } from './navigation/NavigationLink';
 
 export default function Navbar() {
@@ -39,8 +40,15 @@ export default function Navbar() {
       `}>
       <div className="px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="font-orbitron font-black text-xl tracking-wider">
-            GEN <span className="text-[#928dab]">201</span>
+          <div className="flex items-center">
+            <Image
+              src="/assets/gen201_logo.png"
+              alt="GEN 201 Logo"
+              width={120}
+              height={40}
+              className="h-6 w-auto"
+              priority
+            />
           </div>
           
           {/* Desktop Menu */}

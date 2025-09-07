@@ -68,9 +68,16 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
 
       {/* Main Title */}
       <div className="relative mb-4 sm:mb-8 text-center">
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#7303c0] to-[#928dab] animate-pulse">
-          GEN 201
-        </h1>
+        <div className="flex items-center justify-center">
+          <Image
+            src="/assets/gen201_logo.png"
+            alt="GEN 201 Logo"
+            width={300}
+            height={100}
+            className="h-16 sm:h-20 md:h-28 w-auto animate-pulse"
+            priority
+          />
+        </div>
       </div>
 
       {/* Loading Text with Glitch Effect */}
@@ -96,6 +103,22 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
         </span>
       </div>
 
+      {/* Powered by Department of AI */}
+      <div className="mt-6 sm:mt-8 flex flex-col items-center">
+        <p className="text-[#928dab] text-xs sm:text-sm mb-2 font-light">
+          powered by
+        </p>
+        <div className="relative w-22 h-22 sm:w-28 sm:h-28 md:w-34 md:h-34 opacity-80 hover:opacity-100 transition-all duration-300">
+          <Image
+            src="/assets/deptOfAI.png"
+            alt="Department of AI Logo"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+      </div>
+
       {/* Hexagon Grid Background */}
       <div className="absolute inset-0 -z-10 opacity-10">
         <svg width="100%" height="100%" className="scale-[1.5] sm:scale-100">
@@ -117,18 +140,6 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
         </svg>
       </div>
 
-      {/* UgeniX Logo in bottom right */}
-      <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 z-10">
-        <div className="relative w-16 h-16 sm:w-24 sm:h-24 opacity-80 hover:opacity-100 transition-opacity">
-          <Image
-            src="/assets/ugenix.svg"
-            alt="UgeniX Logo"
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
-      </div>
 
       {/* Scan line effect */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

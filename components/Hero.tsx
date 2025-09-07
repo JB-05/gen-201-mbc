@@ -84,9 +84,16 @@ export default function Hero() {
       
       <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
         <div className="mb-8">
-          <h1 className="font-orbitron font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-2 md:mb-3 tracking-wider">
-            GEN <span className="text-[#928dab]">201</span>
-          </h1>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/assets/gen201_logo.png"
+              alt="GEN 201 Logo"
+              width={450}
+              height={120}
+              className="h-15 sm:h-24 md:h-28 lg:h-25 lg:mt-11 md:mt-7 sm:mt-4 w-auto"
+              priority
+            />
+          </div>
           <div className="relative inline-block">
             <p className="font-rajdhani text-base sm:text-lg md:text-xl text-[#928dab] glitch">
               CREATING THE NEXT GENERATION

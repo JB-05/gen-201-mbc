@@ -1,6 +1,7 @@
 import { RegistrationForm } from '@/components/registration/RegistrationForm';
 import { Toaster } from 'sonner';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -51,14 +52,24 @@ export default function RegisterPage() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Gradient Flowing Header */}
         <div className="text-center relative py-8">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-orbitron mb-8 gradient-text">
-            Register for GEN 201
-          </h1>
+          <div className="flex flex-col items-center ">
+            <Image
+              src="/assets/gen201_logo.png"
+              alt="GEN 201 Logo"
+              width={300}
+              height={100}
+              className="h-16 md:h-20 lg:h-24 w-auto"
+              priority
+            />
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-orbitron gradient-text">
+              Registration
+            </h1>
+          </div>
         </div>
 
         {/* Stylized Description */}
         <div className="relative">
-          <p className="text-center text-[#928dab] mb-12 max-w-2xl mx-auto backdrop-blur-sm py-4 px-6 rounded-lg border border-[#7303c0]/20">
+          <p className="text-center text-[#928dab] mb-3 max-w-2xl mx-auto backdrop-blur-sm py-4 px-6 rounded-lg border border-[#7303c0]/20">
             Registration is now open! Join us in this exciting hackathon by filling out the form below.
             Don't miss out - secure your team's spot today. Make sure to provide accurate information for all team members.
           </p>

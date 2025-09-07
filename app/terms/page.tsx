@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 
 export default function TermsPage() {
@@ -44,9 +45,19 @@ export default function TermsPage() {
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-8 text-center gradient-text">
-            Terms & Conditions
-          </h1>
+          <div className="text-center mb-8">
+            <Image
+              src="/assets/gen201_logo.png"
+              alt="GEN 201 Logo"
+              width={200}
+              height={67}
+              className="h-12 md:h-16 w-auto mx-auto mb-4"
+              priority
+            />
+            <h1 className="text-3xl md:text-4xl font-orbitron font-black gradient-text">
+              Terms & Conditions
+            </h1>
+          </div>
 
           <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0]/20 p-6 md:p-8 rounded-lg space-y-8">
             {/* Section 1: Eligibility */}

@@ -17,11 +17,15 @@ interface PaymentOptions {
 }
 
 export async function initializePayment(options: PaymentOptions): Promise<{ success: boolean; orderId?: string; error?: string }> {
+    console.log('initializePayment called with options:', options);
     try {
         // Load Razorpay script
-        await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+        console.log('Loading Razorpay script...');
+        await loadRazorpayScript();
+        console.log('Razorpay script loaded successfully');
 
         // Call your backend API to create a Razorpay order
+        console.log('Calling create-order API...');
         const response = await fetch('/api/payment/create-order', {
             method: 'POST',
             headers: {
@@ -37,13 +41,25 @@ export async function initializePayment(options: PaymentOptions): Promise<{ succ
                     phone: options.phone,
                 },
             }),
+            cache: 'no-store',
         });
 
+        console.log('API response status:', response.status);
         if (!response.ok) {
-            throw new Error('Failed to create payment order');
+            const raw = await response.text();
+            let errorData: any = {};
+            try {
+                errorData = JSON.parse(raw);
+            } catch {
+                // not JSON, keep raw text for debugging
+            }
+            console.error('API error response:', errorData || raw);
+            const message = (errorData && (errorData.error || errorData.message)) || raw || response.statusText || 'Failed to create payment order';
+            throw new Error(message);
         }
 
         const orderData = await response.json();
+        console.log('Order created successfully:', orderData);
 
         return {
             success: true,
@@ -58,15 +74,32 @@ export async function initializePayment(options: PaymentOptions): Promise<{ succ
     }
 }
 
+// Ensure Razorpay SDK is loaded
+export async function loadRazorpayScript(): Promise<void> {
+    if (typeof window !== 'undefined' && (window as any).Razorpay) {
+        return;
+    }
+
+    await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+
+    if (!(typeof window !== 'undefined' && (window as any).Razorpay)) {
+        throw new Error('Failed to load Razorpay SDK');
+    }
+}
+
 export function createRazorpayInstance(
     orderId: string,
     options: PaymentOptions,
     onSuccess: (response: any) => void,
     onFailure: (error: any) => void
 ) {
+    console.log('createRazorpayInstance called with orderId:', orderId);
     if (!RAZORPAY_KEY) {
+        console.error('Razorpay key not found in environment variables');
         throw new Error('Razorpay key not found');
     }
+
+    console.log('Creating Razorpay instance with key:', RAZORPAY_KEY);
 
     const razorpay = new window.Razorpay({
         key: RAZORPAY_KEY,
@@ -89,10 +122,12 @@ export function createRazorpayInstance(
             },
         },
         handler: (response: any) => {
+            console.log('Payment successful, response:', response);
             onSuccess(response);
         },
     });
 
+    console.log('Razorpay instance created successfully');
     return razorpay;
 }
 
