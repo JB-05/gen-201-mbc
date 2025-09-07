@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { initializePayment, createRazorpayInstance, verifyPayment, loadRazorpayScript } from '@/lib/services/payment';
 import { TermsModal } from './TermsModal';
-import { registerTeam } from '@/lib/services/registration';
+import { registerTeam, checkTeamNameAvailability } from '@/lib/services/registration';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -421,6 +421,11 @@ export function RegistrationForm() {
     <form onSubmit={handleSubmit(
       async (data) => {
         if (currentStep === 4) {
+          const available = await checkTeamNameAvailability(data.teamName.trim());
+          if (!available) {
+            toast.error('That team name is already taken. Please choose another.');
+            return;
+          }
           await handlePaymentInitiation(data);
         } else {
           setCurrentStep(currentStep + 1);
@@ -463,7 +468,19 @@ export function RegistrationForm() {
 
         <Button
           type="button"
-          onClick={() => setCurrentStep(2)}
+          onClick={async () => {
+            const teamName = watch('teamName');
+            if (!teamName || teamName.trim().length < 3) {
+              toast.error('Please enter a valid team name (min 3 characters).');
+              return;
+            }
+            const available = await checkTeamNameAvailability(teamName.trim());
+            if (!available) {
+              toast.error('That team name is already taken. Please choose another.');
+              return;
+            }
+            setCurrentStep(2);
+          }}
           className="bg-[#7303c0] hover:bg-[#928dab] text-white"
         >
           Next: Team Lead Details
