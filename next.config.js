@@ -13,7 +13,7 @@ const nextConfig = {
   poweredByHeader: false,
   // Bundle optimization
   experimental: {
-    optimizeCss: true,
+    // optimizeCss: true, // Removed due to missing critters dependency
   },
   // Remove unused CSS
   webpack: (config, { dev, isServer }) => {

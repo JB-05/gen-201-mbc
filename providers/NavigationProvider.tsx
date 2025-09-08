@@ -2,16 +2,16 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { useLoadingScreen } from '@/hooks/useLoadingScreen';
+import { useLoading } from '@/providers/LoadingProvider';
 
 export function NavigationProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { showLoading } = useLoadingScreen();
+  const { setIsLoading } = useLoading();
 
   // Show loading screen only on initial load
   useEffect(() => {
     if (pathname === '/') {
-      showLoading();
+      setIsLoading(true);
     }
   }, []); // Empty dependency array for initial load only
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useLoadingScreen } from '@/hooks/useLoadingScreen';
+import { useLoading } from '@/providers/LoadingProvider';
 
 interface NavigationLinkProps {
   href: string;
@@ -19,7 +19,7 @@ export function NavigationLink({
   onClick 
 }: NavigationLinkProps) {
   const router = useRouter();
-  const { showLoading } = useLoadingScreen();
+  const { setIsLoading } = useLoading();
 
   const handleClick = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -28,7 +28,7 @@ export function NavigationLink({
     onClick?.();
     
     // Show loading screen
-    showLoading();
+    setIsLoading(true);
     
     // Small delay to ensure loading screen appears
     await new Promise(resolve => setTimeout(resolve, 50));
