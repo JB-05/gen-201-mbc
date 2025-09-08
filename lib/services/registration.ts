@@ -51,9 +51,12 @@ export async function registerTeam(
         is_team_lead?: boolean;
     }>,
     projectDetails: {
-        project_name: string;
-        project_field: string;
-        project_description: string;
+        idea_title?: string | null;
+        problem_statement?: string | null;
+        solution_idea?: string | null;
+        implementation_plan?: string | null;
+        beneficiaries?: string | null;
+        teamwork_contribution?: string | null;
     },
     teacherVerification: {
         salutation: 'sir' | 'maam';
@@ -115,9 +118,12 @@ export async function registerTeam(
         // Insert project details
         const projectRecord: ProjectDetailsInsert = {
             team_id: teamId,
-            project_name: projectDetails.project_name,
-            project_field: projectDetails.project_field,
-            project_description: projectDetails.project_description
+            idea_title: projectDetails.idea_title ?? null,
+            problem_statement: projectDetails.problem_statement ?? null,
+            solution_idea: projectDetails.solution_idea ?? null,
+            implementation_plan: projectDetails.implementation_plan ?? null,
+            beneficiaries: projectDetails.beneficiaries ?? null,
+            teamwork_contribution: projectDetails.teamwork_contribution ?? null,
         };
 
         const { error: projectError } = await supabase
@@ -146,13 +152,18 @@ export async function registerTeam(
 
         // Insert payment record if payment details are provided
         if (paymentDetails) {
+            // Get dynamic configuration values
+            const { getRegistrationFee, getCurrency } = await import('./config');
+            const registrationFee = await getRegistrationFee();
+            const currency = await getCurrency();
+
             const paymentRecord: PaymentInsert = {
                 team_id: teamId,
                 order_id: paymentDetails.orderId,
                 payment_id: paymentDetails.paymentId,
                 signature: paymentDetails.signature,
-                amount: 5000, // ₹50 in paise
-                currency: 'INR',
+                amount: registrationFee, // amount stored in rupees
+                currency: currency,
                 payment_status: 'completed',
                 razorpay_order_id: paymentDetails.orderId
             };

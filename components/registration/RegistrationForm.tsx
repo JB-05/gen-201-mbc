@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { CustomInput } from '@/components/ui/custom-input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { toast } from 'sonner';
 import type { RegistrationFormData } from '@/types/registration';
 
@@ -47,9 +48,12 @@ const teacherVerificationSchema = z.object({
 });
 
 const projectDetailsSchema = z.object({
-  projectName: z.string().min(3, 'Project name must be at least 3 characters'),
-  projectField: z.string().min(2, 'Project field is required'),
-  projectDescription: z.string().min(50, 'Project description must be at least 50 characters').max(500, 'Project description cannot exceed 500 characters'),
+  ideaTitle: z.string().min(3, 'Idea title must be at least 3 characters'),
+  problemStatement: z.string().min(30, 'Please write at least 30 characters'),
+  solutionIdea: z.string().min(30, 'Please write at least 30 characters'),
+  implementationPlan: z.string().min(20, 'Please write at least 20 characters'),
+  beneficiaries: z.string().min(3, 'Please specify who benefits'),
+  teamworkContribution: z.string().min(10, 'Please add 2–3 lines'),
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: 'You must accept the terms and conditions',
   }),
@@ -72,6 +76,29 @@ export function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
   const [isLoadingRazorpay, setIsLoadingRazorpay] = useState(false);
+
+  // Initialize with fallback districts immediately
+  const [districts, setDistricts] = useState<Array<{id: string, name: string}>>([
+    { id: '1', name: 'Alappuzha' },
+    { id: '2', name: 'Ernakulam' },
+    { id: '3', name: 'Idukki' },
+    { id: '4', name: 'Kannur' },
+    { id: '5', name: 'Kasaragod' },
+    { id: '6', name: 'Kollam' },
+    { id: '7', name: 'Kottayam' },
+    { id: '8', name: 'Kozhikode' },
+    { id: '9', name: 'Malappuram' },
+    { id: '10', name: 'Palakkad' },
+    { id: '11', name: 'Pathanamthitta' },
+    { id: '12', name: 'Thiruvananthapuram' },
+    { id: '13', name: 'Thrissur' },
+    { id: '14', name: 'Wayanad' },
+  ]);
+
+  // Debug: Log districts when they change
+  useEffect(() => {
+    console.log('Districts state updated:', districts);
+  }, [districts]);
 
   useEffect(() => {
     const loadRazorpaySDK = async () => {
@@ -97,6 +124,46 @@ export function RegistrationForm() {
     }
   }, [currentStep]);
 
+  useEffect(() => {
+    const loadDistricts = async () => {
+      try {
+        console.log('Loading districts from database...');
+        const { getActiveDistricts } = await import('@/lib/services/config');
+        const activeDistricts = await getActiveDistricts();
+        console.log('Loaded districts:', activeDistricts);
+        
+        if (activeDistricts && activeDistricts.length > 0) {
+          setDistricts(activeDistricts.map(d => ({ id: d.id, name: d.name })));
+        } else {
+          console.log('No districts found in database, using fallback...');
+          throw new Error('No districts in database');
+        }
+      } catch (error) {
+        console.error('Failed to load districts from database:', error);
+        console.log('Using fallback districts...');
+        // Fallback to hardcoded districts if config fails
+        setDistricts([
+          { id: '1', name: 'Alappuzha' },
+          { id: '2', name: 'Ernakulam' },
+          { id: '3', name: 'Idukki' },
+          { id: '4', name: 'Kannur' },
+          { id: '5', name: 'Kasaragod' },
+          { id: '6', name: 'Kollam' },
+          { id: '7', name: 'Kottayam' },
+          { id: '8', name: 'Kozhikode' },
+          { id: '9', name: 'Malappuram' },
+          { id: '10', name: 'Palakkad' },
+          { id: '11', name: 'Pathanamthitta' },
+          { id: '12', name: 'Thiruvananthapuram' },
+          { id: '13', name: 'Thrissur' },
+          { id: '14', name: 'Wayanad' },
+        ]);
+      }
+    };
+
+    loadDistricts();
+  }, []);
+
   const {
     register,
     control,
@@ -114,9 +181,12 @@ export function RegistrationForm() {
         phone: '',
       },
       projectDetails: {
-        projectName: '',
-        projectField: '',
-        projectDescription: '',
+        ideaTitle: '',
+        problemStatement: '',
+        solutionIdea: '',
+        implementationPlan: '',
+        beneficiaries: '',
+        teamworkContribution: '',
         termsAccepted: false,
       },
     },
@@ -179,7 +249,7 @@ export function RegistrationForm() {
 
       // Create Razorpay instance
       console.log('Creating Razorpay instance with orderId:', orderId);
-      const razorpay = createRazorpayInstance(
+      const razorpay = await createRazorpayInstance(
         orderId,
         {
           teamName: data.teamName,
@@ -200,6 +270,15 @@ export function RegistrationForm() {
               throw new Error('Payment verification failed');
             }
 
+            // Prepare data mappings
+            const transformedMembers = [
+              { ...data.teamLead, is_team_lead: true },
+              ...data.teamMembers,
+            ].map((m) => ({
+              ...m,
+              food_preference: m.foodPreference === 'non-veg' ? 'non_veg' : (m.foodPreference ?? 'none'),
+            }));
+
             // Register team with payment details
             const registrationResult = await registerTeam(
               {
@@ -209,14 +288,14 @@ export function RegistrationForm() {
                 lead_phone: data.teamLead.phone,
                 lead_email: data.teamLead.email,
               },
-              [
-                { ...data.teamLead, is_team_lead: true },
-                ...data.teamMembers,
-              ],
+              transformedMembers as any,
               {
-                project_name: data.projectDetails.projectName,
-                project_field: data.projectDetails.projectField,
-                project_description: data.projectDetails.projectDescription,
+                idea_title: data.projectDetails.ideaTitle,
+                problem_statement: data.projectDetails.problemStatement,
+                solution_idea: data.projectDetails.solutionIdea,
+                implementation_plan: data.projectDetails.implementationPlan,
+                beneficiaries: data.projectDetails.beneficiaries,
+                teamwork_contribution: data.projectDetails.teamworkContribution,
               },
               {
                 salutation: data.teacherVerification.salutation,
@@ -288,13 +367,14 @@ export function RegistrationForm() {
         {isTeamLead ? 'Team Lead Details' : `Team Member ${index + 1}`}
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-6">
+        {/* Name Field */}
         <div>
           <CustomInput
             {...register(isTeamLead ? 'teamLead.name' : `teamMembers.${index}.name`)}
             placeholder="Full Name"
             type="text"
-            className="bg-black/50 border-[#7303c0] text-white"
+            className="bg-black/50 border-[#7303c0] text-white w-full"
             autoComplete="name"
           />
           {errors?.teamLead?.name && (
@@ -302,7 +382,9 @@ export function RegistrationForm() {
           )}
         </div>
 
+        {/* Gender Selection */}
         <div>
+          <label className="block text-sm font-medium text-[#928dab] mb-3">Gender</label>
           <Controller
             name={isTeamLead ? 'teamLead.gender' : `teamMembers.${index}.gender`}
             control={control}
@@ -310,26 +392,28 @@ export function RegistrationForm() {
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
-                className="flex space-x-4"
+                className="flex space-x-6"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="male" id={`gender-male-${index}`} />
-                  <label htmlFor={`gender-male-${index}`}>Male</label>
+                  <label htmlFor={`gender-male-${index}`} className="text-white cursor-pointer">Male</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="female" id={`gender-female-${index}`} />
-                  <label htmlFor={`gender-female-${index}`}>Female</label>
+                  <label htmlFor={`gender-female-${index}`} className="text-white cursor-pointer">Female</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="other" id={`gender-other-${index}`} />
-                  <label htmlFor={`gender-other-${index}`}>Other</label>
+                  <label htmlFor={`gender-other-${index}`} className="text-white cursor-pointer">Other</label>
                 </div>
               </RadioGroup>
             )}
           />
         </div>
 
+        {/* Grade Selection */}
         <div>
+          <label className="block text-sm font-medium text-[#928dab] mb-3">Grade</label>
           <Controller
             name={isTeamLead ? 'teamLead.grade' : `teamMembers.${index}.grade`}
             control={control}
@@ -337,57 +421,62 @@ export function RegistrationForm() {
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
-                className="flex space-x-4"
+                className="flex space-x-6"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="11" id={`grade-11-${index}`} />
-                  <label htmlFor={`grade-11-${index}`}>Grade 11</label>
+                  <label htmlFor={`grade-11-${index}`} className="text-white cursor-pointer">Grade 11</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="12" id={`grade-12-${index}`} />
-                  <label htmlFor={`grade-12-${index}`}>Grade 12</label>
+                  <label htmlFor={`grade-12-${index}`} className="text-white cursor-pointer">Grade 12</label>
                 </div>
               </RadioGroup>
             )}
           />
         </div>
 
-        <div>
-          <CustomInput
-            {...register(isTeamLead ? 'teamLead.phone' : `teamMembers.${index}.phone`)}
-            placeholder="WhatsApp Number"
-            type="tel"
-            inputMode="numeric"
-            className="bg-black/50 border-[#7303c0] text-white"
-            autoComplete="tel"
-          />
-          {isTeamLead
-            ? errors?.teamLead?.phone && (
-                <span className="text-red-500 text-sm">{errors.teamLead.phone.message as string}</span>
-              )
-            : errors?.teamMembers?.[index]?.phone && (
-                <span className="text-red-500 text-sm">{errors?.teamMembers?.[index]?.phone?.message as unknown as string}</span>
-              )}
+        {/* Contact Information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <CustomInput
+              {...register(isTeamLead ? 'teamLead.phone' : `teamMembers.${index}.phone`)}
+              placeholder="WhatsApp Number"
+              type="tel"
+              inputMode="numeric"
+              className="bg-black/50 border-[#7303c0] text-white"
+              autoComplete="tel"
+            />
+            {isTeamLead
+              ? errors?.teamLead?.phone && (
+                  <span className="text-red-500 text-sm">{errors.teamLead.phone.message as string}</span>
+                )
+              : errors?.teamMembers?.[index]?.phone && (
+                  <span className="text-red-500 text-sm">{errors?.teamMembers?.[index]?.phone?.message as unknown as string}</span>
+                )}
+          </div>
+
+          <div>
+            <CustomInput
+              {...register(isTeamLead ? 'teamLead.email' : `teamMembers.${index}.email`)}
+              placeholder="Email Address"
+              type="email"
+              className="bg-black/50 border-[#7303c0] text-white"
+              autoComplete="email"
+            />
+            {isTeamLead
+              ? errors?.teamLead?.email && (
+                  <span className="text-red-500 text-sm">{errors.teamLead.email.message as string}</span>
+                )
+              : errors?.teamMembers?.[index]?.email && (
+                  <span className="text-red-500 text-sm">{errors?.teamMembers?.[index]?.email?.message as unknown as string}</span>
+                )}
+          </div>
         </div>
 
+        {/* Food Preference */}
         <div>
-          <CustomInput
-            {...register(isTeamLead ? 'teamLead.email' : `teamMembers.${index}.email`)}
-            placeholder="Email Address"
-            type="email"
-            className="bg-black/50 border-[#7303c0] text-white"
-            autoComplete="email"
-          />
-          {isTeamLead
-            ? errors?.teamLead?.email && (
-                <span className="text-red-500 text-sm">{errors.teamLead.email.message as string}</span>
-              )
-            : errors?.teamMembers?.[index]?.email && (
-                <span className="text-red-500 text-sm">{errors?.teamMembers?.[index]?.email?.message as unknown as string}</span>
-              )}
-        </div>
-
-        <div>
+          <label className="block text-sm font-medium text-[#928dab] mb-3">Food Preference</label>
           <Controller
             name={isTeamLead ? 'teamLead.foodPreference' : `teamMembers.${index}.foodPreference`}
             control={control}
@@ -395,19 +484,19 @@ export function RegistrationForm() {
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
-                className="flex space-x-4"
+                className="flex space-x-6"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="veg" id={`food-veg-${index}`} />
-                  <label htmlFor={`food-veg-${index}`}>Vegetarian</label>
+                  <label htmlFor={`food-veg-${index}`} className="text-white cursor-pointer">Vegetarian</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="non-veg" id={`food-nonveg-${index}`} />
-                  <label htmlFor={`food-nonveg-${index}`}>Non-Vegetarian</label>
+                  <label htmlFor={`food-nonveg-${index}`} className="text-white cursor-pointer">Non-Vegetarian</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="none" id={`food-none-${index}`} />
-                  <label htmlFor={`food-none-${index}`}>No Food Required</label>
+                  <label htmlFor={`food-none-${index}`} className="text-white cursor-pointer">No Food Required</label>
                 </div>
               </RadioGroup>
             )}
@@ -443,42 +532,83 @@ export function RegistrationForm() {
           <h3 className="font-orbitron text-xl text-[#928dab] mb-4">Team Details</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <CustomInput
-              {...register('teamName')}
-              placeholder="Team Name"
-              type="text"
-              className="bg-black/50 border-[#7303c0] text-white"
-            />
+            <div>
+              <CustomInput
+                {...register('teamName')}
+                placeholder="Team Name"
+                type="text"
+                className="bg-black/50 border-[#7303c0] text-white"
+              />
+              {errors.teamName && (
+                <p className="text-red-500 text-sm mt-1">{errors.teamName.message}</p>
+              )}
+            </div>
             
-            <CustomInput
-              {...register('school')}
-              placeholder="School Name"
-              type="text"
-              className="bg-black/50 border-[#7303c0] text-white"
-            />
+            <div>
+              <CustomInput
+                {...register('school')}
+                placeholder="School Name"
+                type="text"
+                className="bg-black/50 border-[#7303c0] text-white"
+              />
+              {errors.school && (
+                <p className="text-red-500 text-sm mt-1">{errors.school.message}</p>
+              )}
+            </div>
             
-            <CustomInput
-              {...register('district')}
-              placeholder="District/Location of School"
-              type="text"
-              className="bg-black/50 border-[#7303c0] text-white"
-            />
+            <div className="md:col-span-2">
+              <Controller
+                name={'district'}
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="bg-black/50 border-[#7303c0] text-white">
+                      <SelectValue placeholder="Select District" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-black border-[#7303c0] text-white">
+                      {districts.map((d) => (
+                        <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.district && (
+                <p className="text-red-500 text-sm mt-1">{errors.district.message}</p>
+              )}
+            </div>
           </div>
         </div>
 
         <Button
           type="button"
-          onClick={async () => {
+          onClick={() => {
+            console.log('Next button clicked');
+            
+            // Validate only the current step fields
             const teamName = watch('teamName');
+            const schoolName = watch('school');
+            const district = watch('district');
+            
+            console.log('Form values:', { teamName, schoolName, district });
+            
+            // Basic validation for step 1
             if (!teamName || teamName.trim().length < 3) {
               toast.error('Please enter a valid team name (min 3 characters).');
               return;
             }
-            const available = await checkTeamNameAvailability(teamName.trim());
-            if (!available) {
-              toast.error('That team name is already taken. Please choose another.');
+            
+            if (!schoolName || schoolName.trim().length < 3) {
+              toast.error('Please enter a valid school name (min 3 characters).');
               return;
             }
+            
+            if (!district) {
+              toast.error('Please select a district.');
+              return;
+            }
+            
+            console.log('Moving to step 2');
             setCurrentStep(2);
           }}
           className="bg-[#7303c0] hover:bg-[#928dab] text-white"
@@ -629,48 +759,70 @@ export function RegistrationForm() {
           <div className="space-y-4">
             <div>
               <CustomInput
-                {...register('projectDetails.projectName')}
-                placeholder="Project Name"
+                {...register('projectDetails.ideaTitle')}
+                placeholder="Idea Title (e.g., Smart Water Saver)"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
               />
-              {errors?.projectDetails?.projectName && (
-                <span className="text-red-500 text-sm">{errors.projectDetails.projectName.message}</span>
-              )}
-            </div>
-
-            <div>
-              <select
-                {...register('projectDetails.projectField')}
-                className="w-full bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
-              >
-                <option value="">Select Project Field</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Agriculture">Agriculture</option>
-                <option value="Education">Education</option>
-                <option value="Environment">Environment</option>
-                <option value="Transportation">Transportation</option>
-                <option value="Finance">Finance</option>
-                <option value="Social Impact">Social Impact</option>
-                <option value="Other">Other</option>
-              </select>
-              {errors?.projectDetails?.projectField && (
-                <span className="text-red-500 text-sm">{errors.projectDetails.projectField.message}</span>
+              {errors?.projectDetails?.ideaTitle && (
+                <span className="text-red-500 text-sm">{errors.projectDetails.ideaTitle.message}</span>
               )}
             </div>
 
             <div>
               <textarea
-                {...register('projectDetails.projectDescription')}
-                placeholder="Project Description (minimum 50 characters)"
-                className="w-full h-32 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
+                {...register('projectDetails.problemStatement')}
+                placeholder="Problem you want to solve: Why is it important? Who faces it?"
+                className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
-              {errors?.projectDetails?.projectDescription && (
-                <span className="text-red-500 text-sm">{errors.projectDetails.projectDescription.message}</span>
+              {errors?.projectDetails?.problemStatement && (
+                <span className="text-red-500 text-sm">{errors.projectDetails.problemStatement.message}</span>
               )}
-              <div className="text-sm text-[#928dab] mt-1">
-                Character count: {watch('projectDetails.projectDescription')?.length || 0}/500
-              </div>
+            </div>
+
+            <div>
+              <textarea
+                {...register('projectDetails.solutionIdea')}
+                placeholder="Your solution / idea: How does it solve the problem? What makes it new?"
+                className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
+              />
+              {errors?.projectDetails?.solutionIdea && (
+                <span className="text-red-500 text-sm">{errors.projectDetails.solutionIdea.message}</span>
+              )}
+            </div>
+
+            <div>
+              <textarea
+                {...register('projectDetails.implementationPlan')}
+                placeholder="How will it work? Explain in 4–5 sentences."
+                className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
+              />
+              {errors?.projectDetails?.implementationPlan && (
+                <span className="text-red-500 text-sm">{errors.projectDetails.implementationPlan.message}</span>
+              )}
+            </div>
+
+            <div>
+              <CustomInput
+                {...register('projectDetails.beneficiaries')}
+                placeholder="Who will benefit? (e.g., Students, farmers, parents)"
+                type="text"
+                className="bg-black/50 border-[#7303c0] text-white w-full"
+              />
+              {errors?.projectDetails?.beneficiaries && (
+                <span className="text-red-500 text-sm">{errors.projectDetails.beneficiaries.message}</span>
+              )}
+            </div>
+
+            <div>
+              <textarea
+                {...register('projectDetails.teamworkContribution')}
+                placeholder="Teamwork: 2–3 lines on what each teammate is doing"
+                className="w-full h-24 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
+              />
+              {errors?.projectDetails?.teamworkContribution && (
+                <span className="text-red-500 text-sm">{errors.projectDetails.teamworkContribution.message}</span>
+              )}
             </div>
 
             {/* Terms and Conditions */}

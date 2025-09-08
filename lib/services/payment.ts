@@ -7,8 +7,9 @@ declare global {
     }
 }
 
+import { getRegistrationFee, getEventName, getEventDescription, getPaymentThemeColor, getCurrency } from './config';
+
 const RAZORPAY_KEY = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-const REGISTRATION_FEE = 50; // ₹50 per team
 
 interface PaymentOptions {
     teamName: string;
@@ -24,6 +25,10 @@ export async function initializePayment(options: PaymentOptions): Promise<{ succ
         await loadRazorpayScript();
         console.log('Razorpay script loaded successfully');
 
+        // Get dynamic configuration values
+        const registrationFee = await getRegistrationFee();
+        const currency = await getCurrency();
+
         // Call your backend API to create a Razorpay order
         console.log('Calling create-order API...');
         const response = await fetch('/api/payment/create-order', {
@@ -32,8 +37,8 @@ export async function initializePayment(options: PaymentOptions): Promise<{ succ
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                amount: REGISTRATION_FEE * 100, // Amount in paise
-                currency: 'INR',
+                amount: registrationFee * 100, // Amount in paise
+                currency: currency,
                 receipt: `receipt_${Date.now()}`,
                 notes: {
                     teamName: options.teamName,
@@ -87,7 +92,7 @@ export async function loadRazorpayScript(): Promise<void> {
     }
 }
 
-export function createRazorpayInstance(
+export async function createRazorpayInstance(
     orderId: string,
     options: PaymentOptions,
     onSuccess: (response: any) => void,
@@ -101,12 +106,19 @@ export function createRazorpayInstance(
 
     console.log('Creating Razorpay instance with key:', RAZORPAY_KEY);
 
+    // Get dynamic configuration values
+    const registrationFee = await getRegistrationFee();
+    const currency = await getCurrency();
+    const eventName = await getEventName();
+    const eventDescription = await getEventDescription();
+    const themeColor = await getPaymentThemeColor();
+
     const razorpay = new window.Razorpay({
         key: RAZORPAY_KEY,
-        amount: REGISTRATION_FEE * 100, // Amount in paise
-        currency: 'INR',
-        name: 'GEN 201',
-        description: 'Team Registration Fee',
+        amount: registrationFee * 100, // Amount in paise
+        currency: currency,
+        name: eventName,
+        description: eventDescription,
         order_id: orderId,
         prefill: {
             name: options.teamName,
@@ -114,7 +126,15 @@ export function createRazorpayInstance(
             contact: options.phone,
         },
         theme: {
-            color: '#7303c0',
+            color: themeColor,
+        },
+        // Disable problematic payment methods that cause errors
+        payment_method: {
+            netbanking: false,
+            wallet: false,
+            upi: false,
+            emi: false,
+            paylater: false,
         },
         modal: {
             ondismiss: () => {
@@ -124,6 +144,12 @@ export function createRazorpayInstance(
         handler: (response: any) => {
             console.log('Payment successful, response:', response);
             onSuccess(response);
+        },
+        // Add error handler
+        notes: {
+            team_name: options.teamName,
+            email: options.email,
+            phone: options.phone,
         },
     });
 
@@ -170,6 +196,10 @@ export async function createPaymentRecord(
     status: 'pending' | 'completed' | 'failed' = 'pending'
 ) {
     try {
+        // Get dynamic configuration values
+        const registrationFee = await getRegistrationFee();
+        const currency = await getCurrency();
+
         const { data, error } = await (supabase as any)
             .from('payments')
             .insert([{
@@ -177,8 +207,8 @@ export async function createPaymentRecord(
                 order_id: orderId,
                 payment_id: paymentId,
                 signature: signature,
-                amount: REGISTRATION_FEE * 100, // Amount in paise
-                currency: 'INR',
+                amount: registrationFee, // Amount in rupees
+                currency: currency,
                 payment_status: status,
                 razorpay_order_id: orderId
             }])

@@ -100,7 +100,7 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
     setIsAdmin(false);
   };
 
-  if (loading) {
+  if (loading || (user && isAdmin === null)) {
     return <LoadingScreen />;
   }
 
@@ -144,7 +144,7 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
     );
   }
 
-  if (!isAdmin) {
+  if (isAdmin === false) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-black/30 backdrop-blur-sm border border-red-500 rounded-lg p-8 text-center">

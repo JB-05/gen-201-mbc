@@ -86,27 +86,36 @@ export interface Database {
                 Row: {
                     id: string
                     team_id: string
-                    project_name: string
-                    project_field: string
-                    project_description: string
+                    idea_title: string | null
+                    problem_statement: string | null
+                    solution_idea: string | null
+                    implementation_plan: string | null
+                    beneficiaries: string | null
+                    teamwork_contribution: string | null
                     created_at: string
                     updated_at: string
                 }
                 Insert: {
                     id?: string
                     team_id: string
-                    project_name: string
-                    project_field: string
-                    project_description: string
+                    idea_title?: string | null
+                    problem_statement?: string | null
+                    solution_idea?: string | null
+                    implementation_plan?: string | null
+                    beneficiaries?: string | null
+                    teamwork_contribution?: string | null
                     created_at?: string
                     updated_at?: string
                 }
                 Update: {
                     id?: string
                     team_id?: string
-                    project_name?: string
-                    project_field?: string
-                    project_description?: string
+                    idea_title?: string | null
+                    problem_statement?: string | null
+                    solution_idea?: string | null
+                    implementation_plan?: string | null
+                    beneficiaries?: string | null
+                    teamwork_contribution?: string | null
                     created_at?: string
                     updated_at?: string
                 }
@@ -220,6 +229,7 @@ export interface Database {
                     lead_email: string
                     registration_status: 'pending' | 'shortlisted' | 'rejected' | 'verified'
                     payment_status: 'pending' | 'completed' | 'failed' | 'refunded'
+                    teacher_verified: boolean
                     created_at: string
                     updated_at: string
                 }
@@ -232,6 +242,7 @@ export interface Database {
                     lead_email: string
                     registration_status?: 'pending' | 'shortlisted' | 'rejected' | 'verified'
                     payment_status?: 'pending' | 'completed' | 'failed' | 'refunded'
+                    teacher_verified?: boolean
                     created_at?: string
                     updated_at?: string
                 }
@@ -244,6 +255,59 @@ export interface Database {
                     lead_email?: string
                     registration_status?: 'pending' | 'shortlisted' | 'rejected' | 'verified'
                     payment_status?: 'pending' | 'completed' | 'failed' | 'refunded'
+                    teacher_verified?: boolean
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            configuration: {
+                Row: {
+                    id: string
+                    key: string
+                    value: string
+                    description: string | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    key: string
+                    value: string
+                    description?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    key?: string
+                    value?: string
+                    description?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            districts: {
+                Row: {
+                    id: string
+                    name: string
+                    is_active: boolean
+                    display_order: number
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    name: string
+                    is_active?: boolean
+                    display_order?: number
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    name?: string
+                    is_active?: boolean
+                    display_order?: number
                     created_at?: string
                     updated_at?: string
                 }

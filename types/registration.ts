@@ -14,9 +14,12 @@ export interface TeacherVerification {
 }
 
 export interface ProjectDetails {
-    projectName: string;
-    projectField: string;
-    projectDescription: string;
+    ideaTitle: string;
+    problemStatement: string;
+    solutionIdea: string;
+    implementationPlan: string;
+    beneficiaries: string;
+    teamworkContribution: string;
     termsAccepted: boolean;
 }
 

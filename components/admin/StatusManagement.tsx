@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CustomInput } from '@/components/ui/custom-input';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   Select,
   SelectContent,
@@ -13,9 +13,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle, XCircle, Clock, Shield, MessageSquare } from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { 
+  CheckCircle, 
+  XCircle, 
+  Clock, 
+  Users, 
+  Search,
+  Filter,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react';
 import { toast } from 'sonner';
+// import { getCachedPaginatedTeams, invalidateAdminCache } from '@/lib/services/admin-cache';
 
 interface TeamForReview {
   id: string;
@@ -23,42 +40,166 @@ interface TeamForReview {
   school_name: string;
   school_district: string;
   lead_email: string;
+  lead_phone: string;
   registration_status: 'pending' | 'shortlisted' | 'rejected' | 'verified';
+  teacher_verified: boolean;
   created_at: string;
-  team_members_count: number;
-}
-
-interface StatusUpdateLog {
-  id: string;
-  team_name: string;
-  old_status: string;
-  new_status: string;
-  comment: string | null;
-  admin_name: string;
-  created_at: string;
+  team_members: Array<{
+    name: string;
+    email: string;
+    phone: string;
+    grade: string;
+    is_team_lead: boolean;
+  }>;
+  teacher_details?: {
+    name: string;
+    phone: string;
+    salutation: string;
+  };
 }
 
 interface StatusManagementProps {
   onStatsChange: () => void;
 }
 
+// Memoized team review row
+const TeamReviewRow = React.memo(({ 
+  team, 
+  onStatusChange, 
+  onTeacherVerification 
+}: {
+  team: TeamForReview;
+  onStatusChange: (teamId: string, newStatus: string) => void;
+  onTeacherVerification: (teamId: string, verified: boolean) => void;
+}) => {
+  const getStatusColor = useCallback((status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-500';
+      case 'shortlisted': return 'bg-green-500';
+      case 'rejected': return 'bg-red-500';
+      case 'verified': return 'bg-blue-500';
+      default: return 'bg-gray-500';
+    }
+  }, []);
+
+  return (
+    <TableRow className="border-[#7303c0]">
+      <TableCell className="font-medium text-white">
+        <div>
+          <div className="font-semibold">{team.team_name}</div>
+          <div className="text-sm text-[#928dab]">{team.school_name}</div>
+          <div className="text-xs text-[#928dab]">{team.school_district}</div>
+        </div>
+      </TableCell>
+      <TableCell className="text-[#928dab]">
+        <div className="space-y-1">
+          {team.team_members.map((member, index) => (
+            <div key={index} className="text-sm">
+              <div className="font-medium text-white">
+                {member.name} {member.is_team_lead && '(Lead)'}
+              </div>
+              <div className="text-xs text-[#928dab]">
+                {member.email} • {member.phone} • Grade {member.grade}
+              </div>
+            </div>
+          ))}
+        </div>
+      </TableCell>
+      <TableCell className="text-[#928dab]">
+        {team.teacher_details ? (
+          <div className="text-sm">
+            <div className="font-medium text-white">
+              {team.teacher_details.salutation} {team.teacher_details.name}
+            </div>
+            <div className="text-xs text-[#928dab]">
+              {team.teacher_details.phone}
+            </div>
+          </div>
+        ) : (
+          <span className="text-yellow-500 text-sm">No teacher details</span>
+        )}
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Badge className={`${getStatusColor(team.registration_status)} text-white`}>
+            {team.registration_status}
+          </Badge>
+          <div className="flex items-center gap-1">
+            {team.teacher_verified ? (
+              <CheckCircle className="w-4 h-4 text-green-500" />
+            ) : (
+              <XCircle className="w-4 h-4 text-red-500" />
+            )}
+            <span className="text-xs text-[#928dab]">
+              {team.teacher_verified ? 'Verified' : 'Not Verified'}
+            </span>
+          </div>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex gap-2">
+          <Select
+            value={team.registration_status}
+            onValueChange={(value) => onStatusChange(team.id, value)}
+          >
+            <SelectTrigger className="w-32 h-8 text-xs bg-black/50 border-[#7303c0] text-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-black border-[#7303c0]">
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="shortlisted">Shortlist</SelectItem>
+              <SelectItem value="rejected">Reject</SelectItem>
+              <SelectItem value="verified">Verify</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onTeacherVerification(team.id, !team.teacher_verified)}
+            className={`h-8 text-xs border-[#7303c0] ${
+              team.teacher_verified 
+                ? 'text-red-500 hover:bg-red-500 hover:text-white' 
+                : 'text-green-500 hover:bg-green-500 hover:text-white'
+            }`}
+          >
+            {team.teacher_verified ? 'Unverify' : 'Verify'}
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+});
+
+TeamReviewRow.displayName = 'TeamReviewRow';
+
 export function StatusManagement({ onStatsChange }: StatusManagementProps) {
-  const [pendingTeams, setPendingTeams] = useState<TeamForReview[]>([]);
-  const [statusLogs, setStatusLogs] = useState<StatusUpdateLog[]>([]);
+  const [teams, setTeams] = useState<TeamForReview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
-  const [bulkAction, setBulkAction] = useState<string>('');
-  const [comment, setComment] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('pending');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [districtFilter, setDistrictFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  
+  const PAGE_SIZE = 15;
 
-  useEffect(() => {
-    loadTeamsForReview();
-    loadStatusLogs();
-  }, [filterStatus]);
+  // Memoized filters
+  const filters = useMemo(() => ({
+    statusFilter: statusFilter === 'all' ? undefined : statusFilter,
+    districtFilter: districtFilter === 'all' ? undefined : districtFilter,
+    searchTerm: searchTerm.trim() || undefined
+  }), [statusFilter, districtFilter, searchTerm]);
 
-  const loadTeamsForReview = async () => {
+  // Load teams with pagination
+  const loadTeams = useCallback(async (page: number = 0) => {
     try {
-      const { data: teams, error } = await supabase
+      setLoading(true);
+      console.log('Loading teams for page:', page, 'with filters:', filters);
+
+      // Direct query without cache
+      let query = supabase
         .from('teams')
         .select(`
           id,
@@ -66,94 +207,107 @@ export function StatusManagement({ onStatsChange }: StatusManagementProps) {
           school_name,
           school_district,
           lead_email,
+          lead_phone,
           registration_status,
           created_at,
-          team_members (id)
+          teacher_verified
         `)
-        .eq('registration_status', filterStatus)
-        .order('created_at', { ascending: true }) as {
-          data: Array<{
-            id: string;
-            team_name: string;
-            school_name: string;
-            school_district: string;
-            lead_email: string;
-            registration_status: 'pending' | 'shortlisted' | 'rejected' | 'verified';
-            created_at: string;
-            team_members?: Array<{ id: string }>;
-          }> | null;
-          error: any;
-        };
+        .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      // Apply filters
+      if (filters.statusFilter) {
+        query = query.eq('registration_status', filters.statusFilter);
+      }
+      if (filters.districtFilter) {
+        query = query.eq('school_district', filters.districtFilter);
+      }
+      if (filters.searchTerm) {
+        query = query.or(`team_name.ilike.%${filters.searchTerm}%,school_name.ilike.%${filters.searchTerm}%`);
+      }
 
-      const teamsWithCount = teams?.map(team => ({
-        id: team.id,
-        team_name: team.team_name,
-        school_name: team.school_name,
-        school_district: team.school_district,
-        lead_email: team.lead_email,
-        registration_status: team.registration_status,
-        created_at: team.created_at,
-        team_members_count: team.team_members?.length || 0
-      })) || [];
+      // Get total count
+      const { count, error: countError } = await query;
+      if (countError) {
+        console.error('Error getting count:', countError);
+        throw countError;
+      }
+      
+      setTotalCount(count || 0);
+      setTotalPages(Math.ceil((count || 0) / PAGE_SIZE));
+      console.log('Total teams:', count, 'Total pages:', Math.ceil((count || 0) / PAGE_SIZE));
 
-      setPendingTeams(teamsWithCount);
+      // Get paginated data
+      const { data: teams, error } = await query
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+      if (error) {
+        console.error('Error fetching teams:', error);
+        throw error;
+      }
+
+      console.log('Fetched teams:', teams?.length || 0);
+
+      // Load team members and teacher details for each team
+      const teamsWithDetails = await Promise.all(
+        (teams || []).map(async (team: any) => {
+          try {
+            const [{ data: members }, { data: teacherVerification }] = await Promise.all([
+              supabase
+                .from('team_members')
+                .select('name,email,phone,grade,is_team_lead')
+                .eq('team_id', team.id)
+                .order('is_team_lead', { ascending: false }),
+              supabase
+                .from('teacher_verifications')
+                .select('teacher_name,teacher_phone,salutation')
+                .eq('team_id', team.id)
+                .single()
+            ]);
+
+            return {
+              ...team,
+              team_members: members || [],
+              teacher_details: teacherVerification ? {
+                name: (teacherVerification as any).teacher_name || '',
+                phone: (teacherVerification as any).teacher_phone || '',
+                salutation: (teacherVerification as any).salutation || ''
+              } : undefined
+            };
+          } catch (error) {
+            console.error('Error loading team details:', error);
+            return {
+              ...team,
+              team_members: [],
+              teacher_details: undefined
+            };
+          }
+        })
+      );
+      
+      console.log('Teams with details:', teamsWithDetails.length);
+      setTeams(teamsWithDetails);
     } catch (error) {
-      console.error('Error loading teams for review:', error);
-      toast.error('Failed to load teams for review');
-    }
-  };
-
-  const loadStatusLogs = async () => {
-    try {
-      const { data: logs, error } = await supabase
-        .from('team_status_logs')
-        .select(`
-          id,
-          old_status,
-          new_status,
-          comment,
-          created_at,
-          teams (team_name),
-          admins (name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(20) as {
-          data: Array<{
-            id: string;
-            old_status: string | null;
-            new_status: string;
-            comment: string | null;
-            created_at: string;
-            teams: { team_name: string } | null;
-            admins: { name: string } | null;
-          }> | null;
-          error: any;
-        };
-
-      if (error) throw error;
-
-      const formattedLogs = logs?.map(log => ({
-        id: log.id,
-        team_name: log.teams?.team_name || 'Unknown Team',
-        old_status: log.old_status || '',
-        new_status: log.new_status,
-        comment: log.comment,
-        admin_name: log.admins?.name || 'Unknown Admin',
-        created_at: log.created_at
-      })) || [];
-
-      setStatusLogs(formattedLogs);
-    } catch (error) {
-      console.error('Error loading status logs:', error);
-      // Don't show error toast for logs as it's not critical
+      console.error('Error loading teams:', error);
+      toast.error('Failed to load teams');
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
-  const updateTeamStatus = async (teamId: string, newStatus: string, comment?: string) => {
+  // Load teams when filters change
+  useEffect(() => {
+    setCurrentPage(0);
+    loadTeams(0);
+  }, [loadTeams]);
+
+  // Memoized unique districts
+  const uniqueDistricts = useMemo(() => {
+    const districts = Array.from(new Set(teams.map(team => team.school_district)));
+    return districts.sort();
+  }, [teams]);
+
+  // Memoized update status handler
+  const updateTeamStatus = useCallback(async (teamId: string, newStatus: string) => {
     try {
       const { error } = await (supabase as any)
         .from('teams')
@@ -162,302 +316,241 @@ export function StatusManagement({ onStatsChange }: StatusManagementProps) {
 
       if (error) throw error;
 
-      // Log the status change with comment if provided
-      if (comment) {
-        await (supabase as any)
-          .from('team_status_logs')
-          .update({ comment })
-          .eq('team_id', teamId)
-          .order('created_at', { ascending: false })
-          .limit(1);
-      }
-
-      await loadTeamsForReview();
-      await loadStatusLogs();
+      await loadTeams(currentPage);
       onStatsChange();
       toast.success('Team status updated successfully');
     } catch (error) {
       console.error('Error updating team status:', error);
       toast.error('Failed to update team status');
     }
-  };
+  }, [currentPage, loadTeams, onStatsChange]);
 
-  const handleBulkStatusUpdate = async () => {
-    if (selectedTeams.length === 0 || !bulkAction) {
-      toast.error('Please select teams and an action');
-      return;
-    }
-
+  // Memoized teacher verification handler
+  const updateTeacherVerification = useCallback(async (teamId: string, verified: boolean) => {
     try {
       const { error } = await (supabase as any)
         .from('teams')
-        .update({ registration_status: bulkAction })
-        .in('id', selectedTeams);
+        .update({ teacher_verified: verified })
+        .eq('id', teamId);
 
       if (error) throw error;
 
-      // Log bulk changes with comment
-      if (comment) {
-        const logPromises = selectedTeams.map(teamId =>
-          (supabase as any)
-            .from('team_status_logs')
-            .insert({
-              team_id: teamId,
-              old_status: filterStatus,
-              new_status: bulkAction,
-              comment: `Bulk update: ${comment}`
-            })
-        );
-        
-        await Promise.all(logPromises);
-      }
-
-      setSelectedTeams([]);
-      setBulkAction('');
-      setComment('');
-      await loadTeamsForReview();
-      await loadStatusLogs();
+      await loadTeams(currentPage);
       onStatsChange();
-      toast.success(`${selectedTeams.length} teams updated successfully`);
+      toast.success(`Teacher ${verified ? 'verified' : 'unverified'} successfully`);
     } catch (error) {
-      console.error('Error bulk updating teams:', error);
-      toast.error('Failed to update teams');
+      console.error('Error updating teacher verification:', error);
+      toast.error('Failed to update teacher verification');
     }
-  };
+  }, [currentPage, loadTeams, onStatsChange]);
 
-  const toggleTeamSelection = (teamId: string) => {
-    setSelectedTeams(prev =>
-      prev.includes(teamId)
-        ? prev.filter(id => id !== teamId)
-        : [...prev, teamId]
-    );
-  };
+  // Memoized pagination handlers
+  const handlePageChange = useCallback((newPage: number) => {
+    setCurrentPage(newPage);
+    loadTeams(newPage);
+  }, [loadTeams]);
 
-  const selectAllTeams = () => {
-    if (selectedTeams.length === pendingTeams.length) {
-      setSelectedTeams([]);
-    } else {
-      setSelectedTeams(pendingTeams.map(team => team.id));
-    }
-  };
+  // Memoized stats
+  const stats = useMemo(() => {
+    const total = teams.length;
+    const pending = teams.filter(t => t.registration_status === 'pending').length;
+    const shortlisted = teams.filter(t => t.registration_status === 'shortlisted').length;
+    const verified = teams.filter(t => t.registration_status === 'verified').length;
+    const teacherVerified = teams.filter(t => t.teacher_verified).length;
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending': return <Clock className="w-4 h-4" />;
-      case 'shortlisted': return <CheckCircle className="w-4 h-4" />;
-      case 'rejected': return <XCircle className="w-4 h-4" />;
-      case 'verified': return <Shield className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-500';
-      case 'shortlisted': return 'bg-green-500';
-      case 'rejected': return 'bg-red-500';
-      case 'verified': return 'bg-blue-500';
-      default: return 'bg-gray-500';
-    }
-  };
+    return { total, pending, shortlisted, verified, teacherVerified };
+  }, [teams]);
 
   if (loading) {
     return (
-      <Card className="bg-black/20 backdrop-blur-lg border border-[#7303c0]/30 shadow-lg">
+      <Card className="bg-transparent border-none shadow-none">
         <CardContent className="p-6">
-          <div className="text-center text-[#928dab]">Loading status management...</div>
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64 bg-[#7303c0]/20" />
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} className="h-20 w-full bg-[#7303c0]/20" />
+              ))}
+        </div>
+            <Skeleton className="h-64 w-full bg-[#7303c0]/20" />
+      </div>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Bulk Actions */}
-      <Card className="bg-black/20 backdrop-blur-lg border border-[#7303c0]/30 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl text-white">Bulk Status Management</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-48 bg-black/50 border-[#7303c0] text-white">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent className="bg-black border-[#7303c0]">
-                <SelectItem value="pending">Pending Teams</SelectItem>
-                <SelectItem value="shortlisted">Shortlisted Teams</SelectItem>
-                <SelectItem value="rejected">Rejected Teams</SelectItem>
-                <SelectItem value="verified">Verified Teams</SelectItem>
-              </SelectContent>
-            </Select>
+    <Card className="bg-transparent border-none shadow-none">
+      <CardHeader>
+        <CardTitle className="text-xl text-white">Team Review & Status Management</CardTitle>
+        
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-6">
+          <Card className="bg-black/20 backdrop-blur-lg border border-[#7303c0]/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#7303c0]" />
+                <div>
+                  <div className="text-2xl font-bold text-white">{stats.total}</div>
+                  <div className="text-xs text-[#928dab]">Total Teams</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-black/20 backdrop-blur-lg border border-yellow-500/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-yellow-500" />
+                <div>
+                  <div className="text-2xl font-bold text-white">{stats.pending}</div>
+                  <div className="text-xs text-[#928dab]">Pending</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-black/20 backdrop-blur-lg border border-green-500/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <div>
+                  <div className="text-2xl font-bold text-white">{stats.shortlisted}</div>
+                  <div className="text-xs text-[#928dab]">Shortlisted</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-black/20 backdrop-blur-lg border border-blue-500/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-blue-500" />
+                <div>
+                  <div className="text-2xl font-bold text-white">{stats.verified}</div>
+                  <div className="text-xs text-[#928dab]">Verified</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-black/20 backdrop-blur-lg border border-purple-500/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-purple-500" />
+        <div>
+                  <div className="text-2xl font-bold text-white">{stats.teacherVerified}</div>
+                  <div className="text-xs text-[#928dab]">Teacher Verified</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-            <Select value={bulkAction} onValueChange={setBulkAction}>
-              <SelectTrigger className="w-48 bg-black/50 border-[#7303c0] text-white">
-                <SelectValue placeholder="Select action" />
-              </SelectTrigger>
-              <SelectContent className="bg-black border-[#7303c0]">
-                <SelectItem value="shortlisted">Shortlist</SelectItem>
-                <SelectItem value="rejected">Reject</SelectItem>
-                <SelectItem value="verified">Verify</SelectItem>
-                <SelectItem value="pending">Mark Pending</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row gap-4 mt-6">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#928dab] w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search teams, schools..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-black/50 border border-[#7303c0] rounded-lg text-white placeholder-[#928dab] focus:outline-none focus:border-[#7303c0]/60"
+              />
+            </div>
+        </div>
+        
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-48 bg-black/50 border-[#7303c0] text-white">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+            <SelectContent className="bg-black border-[#7303c0]">
+              <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="shortlisted">Shortlisted</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            <SelectItem value="verified">Verified</SelectItem>
+            </SelectContent>
+          </Select>
 
-            <Button
-              onClick={handleBulkStatusUpdate}
-              disabled={selectedTeams.length === 0 || !bulkAction}
-              className="bg-[#7303c0] hover:bg-[#928dab] text-white"
-            >
-              Update {selectedTeams.length} Teams
-            </Button>
-          </div>
+          <Select value={districtFilter} onValueChange={setDistrictFilter}>
+            <SelectTrigger className="w-48 bg-black/50 border-[#7303c0] text-white">
+              <SelectValue placeholder="Filter by district" />
+            </SelectTrigger>
+            <SelectContent className="bg-black border-[#7303c0]">
+              <SelectItem value="all">All Districts</SelectItem>
+              {uniqueDistricts.map(district => (
+                <SelectItem key={district} value={district}>{district}</SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      </div>
+      </CardHeader>
 
-          <Textarea
-            placeholder="Add comment for status change (optional)"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="bg-black/50 border-[#7303c0] text-white"
-          />
-        </CardContent>
-      </Card>
-
-      {/* Teams List */}
-      <Card className="bg-black/20 backdrop-blur-lg border border-[#7303c0]/30 shadow-lg">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-xl text-white">
-              {filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)} Teams ({pendingTeams.length})
-            </CardTitle>
-            <Button
-              onClick={selectAllTeams}
-              variant="outline"
-              className="border-[#7303c0] text-[#7303c0] hover:bg-[#7303c0] hover:text-white"
-            >
-              {selectedTeams.length === pendingTeams.length ? 'Deselect All' : 'Select All'}
-            </Button>
-          </div>
-        </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {pendingTeams.map((team) => (
-              <div
-                key={team.id}
-                className={`p-4 rounded-lg border transition-all ${
-                  selectedTeams.includes(team.id)
-                    ? 'bg-[#7303c0]/20 border-[#7303c0]'
-                    : 'bg-black/20 border-[#7303c0]/30'
-                }`}
+        <div className="rounded-md border border-[#7303c0]">
+            <Table>
+              <TableHeader>
+              <TableRow className="border-[#7303c0]">
+                <TableHead className="text-[#928dab]">Team & School</TableHead>
+                  <TableHead className="text-[#928dab]">Team Members</TableHead>
+                  <TableHead className="text-[#928dab]">Teacher Details</TableHead>
+                <TableHead className="text-[#928dab]">Status & Verification</TableHead>
+                  <TableHead className="text-[#928dab]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+              {teams.map((team) => (
+                <TeamReviewRow
+                  key={team.id}
+                  team={team}
+                  onStatusChange={updateTeamStatus}
+                  onTeacherVerification={updateTeacherVerification}
+                />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-between items-center mt-4">
+            <div className="text-sm text-[#928dab]">
+              Showing {currentPage * PAGE_SIZE + 1} to {Math.min((currentPage + 1) * PAGE_SIZE, totalCount)} of {totalCount} results
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 0}
+                className="border-[#7303c0] text-[#7303c0] hover:bg-[#7303c0] hover:text-white"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="checkbox"
-                      checked={selectedTeams.includes(team.id)}
-                      onChange={() => toggleTeamSelection(team.id)}
-                      className="w-4 h-4 rounded border-[#7303c0] bg-black/50"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-white">{team.team_name}</h3>
-                      <p className="text-sm text-[#928dab]">
-                        {team.school_name} • {team.school_district}
-                      </p>
-                      <p className="text-xs text-[#928dab]">
-                        {team.team_members_count} members • {team.lead_email}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Badge className={`${getStatusColor(team.registration_status)} text-white flex items-center gap-1`}>
-                      {getStatusIcon(team.registration_status)}
-                      {team.registration_status}
-                    </Badge>
-
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        onClick={() => updateTeamStatus(team.id, 'shortlisted')}
-                        className="bg-green-500 hover:bg-green-600 text-white h-8 px-2"
-                        disabled={team.registration_status === 'shortlisted'}
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => updateTeamStatus(team.id, 'rejected')}
-                        className="bg-red-500 hover:bg-red-600 text-white h-8 px-2"
-                        disabled={team.registration_status === 'rejected'}
-                      >
-                        <XCircle className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => updateTeamStatus(team.id, 'verified')}
-                        className="bg-blue-500 hover:bg-blue-600 text-white h-8 px-2"
-                        disabled={team.registration_status === 'verified'}
-                      >
-                        <Shield className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {pendingTeams.length === 0 && (
-              <div className="text-center py-8 text-[#928dab]">
-                No {filterStatus} teams found.
-              </div>
-            )}
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages - 1}
+                className="border-[#7303c0] text-[#7303c0] hover:bg-[#7303c0] hover:text-white"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
+        )}
+
+        {teams.length === 0 && (
+            <div className="text-center py-8 text-[#928dab]">
+            No teams found matching your filters.
+            </div>
+          )}
         </CardContent>
       </Card>
-
-      {/* Status Change Log */}
-      <Card className="bg-black/20 backdrop-blur-lg border border-[#7303c0]/30 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl text-white flex items-center gap-2">
-            <MessageSquare className="w-5 h-5" />
-            Recent Status Changes
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {statusLogs.map((log) => (
-              <div key={log.id} className="p-3 bg-black/20 rounded border border-[#7303c0]/30">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-white font-medium">{log.team_name}</p>
-                    <div className="flex items-center gap-2 text-sm text-[#928dab] mt-1">
-                      <Badge className={`${getStatusColor(log.old_status)} text-white text-xs`}>
-                        {log.old_status}
-                      </Badge>
-                      <span>→</span>
-                      <Badge className={`${getStatusColor(log.new_status)} text-white text-xs`}>
-                        {log.new_status}
-                      </Badge>
-                    </div>
-                    {log.comment && (
-                      <p className="text-sm text-[#928dab] mt-2 italic">"{log.comment}"</p>
-                    )}
-                  </div>
-                  <div className="text-right text-xs text-[#928dab]">
-                    <p>by {log.admin_name}</p>
-                    <p>{new Date(log.created_at).toLocaleString()}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {statusLogs.length === 0 && (
-              <div className="text-center py-8 text-[#928dab]">
-                No status changes recorded yet.
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
   );
 }
