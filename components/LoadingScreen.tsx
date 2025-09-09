@@ -108,12 +108,13 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
         <p className="text-[#928dab] text-xs sm:text-sm mb-2 font-light">
           powered by
         </p>
-        <div className="relative w-22 h-22 sm:w-28 sm:h-28 md:w-34 md:h-34 opacity-80 hover:opacity-100 transition-all duration-300">
+        <div className="relative opacity-80 hover:opacity-100 transition-all duration-300">
           <Image
             src="/assets/deptOfAI.png"
             alt="Department of AI Logo"
-            fill
-            className="object-contain"
+            width={96}
+            height={96}
+            className="h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 object-contain"
             priority
           />
         </div>

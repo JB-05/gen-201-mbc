@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { initializePayment, createRazorpayInstance, verifyPayment, loadRazorpayScript } from '@/lib/services/payment';
 import { TermsModal } from './TermsModal';
@@ -72,6 +73,7 @@ const registrationSchema = z.object({
 });
 
 export function RegistrationForm() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
@@ -310,6 +312,53 @@ export function RegistrationForm() {
             );
 
             if (registrationResult.success) {
+              // Persist success payload for success page
+              try {
+                const successPayload = {
+                  team: {
+                    team_name: data.teamName,
+                    school_name: data.school,
+                    school_district: data.district,
+                    lead_phone: data.teamLead.phone,
+                    lead_email: data.teamLead.email,
+                  },
+                  members: transformedMembers,
+                  project: {
+                    idea_title: data.projectDetails.ideaTitle,
+                    problem_statement: data.projectDetails.problemStatement,
+                    solution_idea: data.projectDetails.solutionIdea,
+                    implementation_plan: data.projectDetails.implementationPlan,
+                    beneficiaries: data.projectDetails.beneficiaries,
+                    teamwork_contribution: data.projectDetails.teamworkContribution,
+                  },
+                  teacher: {
+                    salutation: data.teacherVerification.salutation,
+                    teacher_name: data.teacherVerification.name,
+                    teacher_phone: data.teacherVerification.phone,
+                  },
+                  payment: {
+                    paymentId: response.razorpay_payment_id,
+                    orderId: response.razorpay_order_id,
+                  },
+                  meta: {
+                    teamId: registrationResult.teamId,
+                    teamCode: (() => {
+                      try {
+                        const district = data.district.replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase();
+                        const shortId = (registrationResult.teamId || '').replace(/-/g, '').slice(0, 6).toUpperCase();
+                        return shortId ? `GEN201-${district}-${shortId}` : undefined;
+                      } catch {
+                        return undefined;
+                      }
+                    })(),
+                    createdAt: new Date().toISOString(),
+                  },
+                };
+                sessionStorage.setItem('gen201_registration_success', JSON.stringify(successPayload));
+              } catch (e) {
+                console.error('Failed to store success payload', e);
+              }
+
               // Show success message with more details
               toast.success(
                 `🎉 Registration successful! Team ID: ${registrationResult.teamId}. Check your email for confirmation.`,
@@ -320,8 +369,8 @@ export function RegistrationForm() {
               reset();
               setCurrentStep(1);
               
-              // Scroll to top
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              // Redirect to success page
+              router.push('/register/success');
             } else {
               throw new Error(registrationResult.error || 'Registration failed');
             }
@@ -362,7 +411,7 @@ export function RegistrationForm() {
   };
 
   const MemberForm = ({ isTeamLead = false, index = 0 }) => (
-    <div className="space-y-4 p-6 bg-black/30 backdrop-blur-sm border border-[#7303c0] clip-polygon">
+    <div className="space-y-4 p-4 sm:p-6 bg-black/30 backdrop-blur-sm border border-[#7303c0] clip-polygon">
       <h3 className="font-orbitron text-xl text-[#928dab] mb-4">
         {isTeamLead ? 'Team Lead Details' : `Team Member ${index + 1}`}
       </h3>
@@ -392,7 +441,7 @@ export function RegistrationForm() {
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
-                className="flex space-x-6"
+                className="flex flex-wrap gap-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="male" id={`gender-male-${index}`} />
@@ -421,7 +470,7 @@ export function RegistrationForm() {
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
-                className="flex space-x-6"
+                className="flex flex-wrap gap-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="11" id={`grade-11-${index}`} />
@@ -444,7 +493,7 @@ export function RegistrationForm() {
               placeholder="WhatsApp Number"
               type="tel"
               inputMode="numeric"
-              className="bg-black/50 border-[#7303c0] text-white"
+              className="bg-black/50 border-[#7303c0] text-white w-full"
               autoComplete="tel"
             />
             {isTeamLead
@@ -461,7 +510,7 @@ export function RegistrationForm() {
               {...register(isTeamLead ? 'teamLead.email' : `teamMembers.${index}.email`)}
               placeholder="Email Address"
               type="email"
-              className="bg-black/50 border-[#7303c0] text-white"
+              className="bg-black/50 border-[#7303c0] text-white w-full"
               autoComplete="email"
             />
             {isTeamLead
@@ -484,7 +533,7 @@ export function RegistrationForm() {
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
-                className="flex space-x-6"
+                className="flex flex-wrap gap-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="veg" id={`food-veg-${index}`} />
@@ -524,11 +573,11 @@ export function RegistrationForm() {
         console.error('Form validation failed:', errors);
         toast.error('Please check the form for errors.');
       }
-    )} noValidate className="max-w-4xl mx-auto space-y-8 p-4">
+    )} noValidate className="max-w-4xl mx-auto space-y-6 p-3 sm:space-y-8 sm:p-4">
       <fieldset disabled={isSubmitting} className="space-y-8">
       {/* Step 1: Team Details */}
       <div className={`space-y-6 ${currentStep !== 1 && 'hidden'}`}>
-        <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-6 clip-polygon">
+        <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-4 sm:p-6 clip-polygon">
           <h3 className="font-orbitron text-xl text-[#928dab] mb-4">Team Details</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -537,7 +586,7 @@ export function RegistrationForm() {
                 {...register('teamName')}
                 placeholder="Team Name"
                 type="text"
-                className="bg-black/50 border-[#7303c0] text-white"
+                className="bg-black/50 border-[#7303c0] text-white w-full"
               />
               {errors.teamName && (
                 <p className="text-red-500 text-sm mt-1">{errors.teamName.message}</p>
@@ -549,7 +598,7 @@ export function RegistrationForm() {
                 {...register('school')}
                 placeholder="School Name"
                 type="text"
-                className="bg-black/50 border-[#7303c0] text-white"
+                className="bg-black/50 border-[#7303c0] text-white w-full"
               />
               {errors.school && (
                 <p className="text-red-500 text-sm mt-1">{errors.school.message}</p>
@@ -562,7 +611,7 @@ export function RegistrationForm() {
                 control={control}
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="bg-black/50 border-[#7303c0] text-white">
+                    <SelectTrigger className="bg-black/50 border-[#7303c0] text-white w-full">
                       <SelectValue placeholder="Select District" />
                     </SelectTrigger>
                     <SelectContent className="bg-black border-[#7303c0] text-white">
@@ -611,7 +660,7 @@ export function RegistrationForm() {
             console.log('Moving to step 2');
             setCurrentStep(2);
           }}
-          className="bg-[#7303c0] hover:bg-[#928dab] text-white"
+          className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto"
         >
           Next: Team Lead Details
         </Button>
@@ -622,7 +671,7 @@ export function RegistrationForm() {
         <MemberForm isTeamLead={true} />
         
         {/* Teacher Verification Section */}
-        <div className="space-y-4 p-6 bg-black/30 backdrop-blur-sm border border-[#7303c0] clip-polygon">
+        <div className="space-y-4 p-4 sm:p-6 bg-black/30 backdrop-blur-sm border border-[#7303c0] clip-polygon">
           <h3 className="font-orbitron text-xl text-[#928dab] mb-4">
             Teacher Verification
           </h3>
@@ -636,7 +685,7 @@ export function RegistrationForm() {
                   <RadioGroup
                     value={field.value}
                     onValueChange={field.onChange}
-                    className="flex space-x-4"
+                    className="flex flex-wrap gap-4"
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="sir" id="salutation-sir" />
@@ -659,7 +708,7 @@ export function RegistrationForm() {
                 {...register('teacherVerification.name')}
                 placeholder="Teacher's Name"
                 type="text"
-                className="bg-black/50 border-[#7303c0] text-white"
+                className="bg-black/50 border-[#7303c0] text-white w-full"
               />
               {errors?.teacherVerification?.name && (
                 <span className="text-red-500 text-sm">{errors.teacherVerification.name.message}</span>
@@ -672,7 +721,7 @@ export function RegistrationForm() {
                 placeholder="Teacher's Phone Number"
                 type="tel"
                 inputMode="numeric"
-                className="bg-black/50 border-[#7303c0] text-white"
+                className="bg-black/50 border-[#7303c0] text-white w-full"
               />
               {errors?.teacherVerification?.phone && (
                 <span className="text-red-500 text-sm">{errors.teacherVerification.phone.message}</span>
@@ -681,18 +730,18 @@ export function RegistrationForm() {
           </div>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
           <Button
             type="button"
             onClick={() => setCurrentStep(1)}
-            className="bg-[#928dab] hover:bg-[#7303c0] text-white"
+            className="bg-[#928dab] hover:bg-[#7303c0] text-white w-full sm:w-auto"
           >
             Back
           </Button>
           <Button
             type="button"
             onClick={() => setCurrentStep(3)}
-            className="bg-[#7303c0] hover:bg-[#928dab] text-white"
+            className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto"
           >
             Next: Team Members
           </Button>
@@ -727,24 +776,24 @@ export function RegistrationForm() {
               email: '',
               foodPreference: 'none'
             })}
-            className="bg-[#928dab] hover:bg-[#7303c0] text-white"
+            className="bg-[#928dab] hover:bg-[#7303c0] text-white w-full sm:w-auto"
           >
             Add Team Member
           </Button>
         )}
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
           <Button
             type="button"
             onClick={() => setCurrentStep(2)}
-            className="bg-[#928dab] hover:bg-[#7303c0] text-white"
+            className="bg-[#928dab] hover:bg-[#7303c0] text-white w-full sm:w-auto"
           >
             Back
           </Button>
           <Button
             type="button"
             onClick={() => setCurrentStep(4)}
-            className="bg-[#7303c0] hover:bg-[#928dab] text-white"
+            className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto"
           >
             Next: Project Details
           </Button>
@@ -753,7 +802,7 @@ export function RegistrationForm() {
 
       {/* Step 4: Project Details */}
       <div className={`space-y-6 ${currentStep !== 4 && 'hidden'}`}>
-        <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-6 clip-polygon">
+        <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-4 sm:p-6 clip-polygon">
           <h3 className="font-orbitron text-xl text-[#928dab] mb-4">Project Details</h3>
           
           <div className="space-y-4">
@@ -827,7 +876,7 @@ export function RegistrationForm() {
 
             {/* Terms and Conditions */}
             <div className="mt-8">
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start gap-3">
                 <input
                   type="checkbox"
                   {...register('projectDetails.termsAccepted')}
@@ -853,18 +902,18 @@ export function RegistrationForm() {
           </div>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4">
           <Button
             type="button"
             onClick={() => setCurrentStep(3)}
-            className="bg-[#928dab] hover:bg-[#7303c0] text-white"
+            className="bg-[#928dab] hover:bg-[#7303c0] text-white w-full sm:w-auto"
           >
             Back
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting || !watch('projectDetails.termsAccepted') || isLoadingRazorpay || !isRazorpayLoaded}
-            className="bg-[#7303c0] hover:bg-[#928dab] text-white flex items-center space-x-2"
+            className="bg-[#7303c0] hover:bg-[#928dab] text-white flex items-center justify-center space-x-2 w-full sm:w-auto"
           >
             <span>
               {isLoadingRazorpay ? (

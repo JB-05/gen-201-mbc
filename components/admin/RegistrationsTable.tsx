@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 
 interface TeamRegistration {
   id: string;
+  team_code?: string;
   team_name: string;
   school_name: string;
   school_district: string;
@@ -82,7 +83,12 @@ const TableRowMemo = React.memo(({
   return (
     <TableRow className="border-[#7303c0]">
       <TableCell className="font-medium text-white">
-        {registration.team_name}
+        <div className="flex flex-col">
+          <span>{registration.team_name}</span>
+          {registration.team_code && (
+            <span className="text-xs text-[#928dab]">{registration.team_code}</span>
+          )}
+        </div>
       </TableCell>
       <TableCell className="text-[#928dab]">
         {registration.school_name}
@@ -253,6 +259,7 @@ export function RegistrationsTable({ onStatsChange }: RegistrationsTableProps) {
         .from('teams')
         .select(`
           id,
+          team_code,
           team_name,
           school_name,
           school_district,
@@ -291,6 +298,7 @@ export function RegistrationsTable({ onStatsChange }: RegistrationsTableProps) {
         if (!team) return null;
         return {
           id: team.id,
+          team_code: team.team_code || undefined,
           team_name: team.team_name,
           school_name: team.school_name,
           school_district: team.school_district,
@@ -383,11 +391,12 @@ export function RegistrationsTable({ onStatsChange }: RegistrationsTableProps) {
   // Memoized export handler
   const exportToCSV = useCallback(() => {
     const headers = [
-      'Team Name', 'School', 'District', 'Lead Email', 'Lead Phone', 
+      'Team Code', 'Team Name', 'School', 'District', 'Lead Email', 'Lead Phone', 
       'Status', 'Payment Status', 'Registration Date', 'Team Size'
     ];
 
     const csvData = registrations.map(reg => [
+      reg.team_code || '',
       reg.team_name,
       reg.school_name,
       reg.school_district,

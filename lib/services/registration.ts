@@ -93,6 +93,23 @@ export async function registerTeam(
 
         const teamId = (team as any).id;
 
+        // Generate human-friendly team code and save
+        try {
+            const normalizedDistrict = teamData.school_district
+                .replace(/[^A-Za-z]/g, '')
+                .slice(0, 3)
+                .toUpperCase();
+            const shortId = String(teamId).replace(/-/g, '').slice(0, 6).toUpperCase();
+            const teamCode = `GEN201-${normalizedDistrict}-${shortId}`;
+
+            await (supabase as any)
+                .from('teams')
+                .update({ team_code: teamCode } as any)
+                .eq('id', teamId);
+        } catch (e) {
+            console.warn('Failed to set team_code; continuing without it', e);
+        }
+
         // Insert team members
         const membersToInsert: TeamMemberInsert[] = teamMembers.map(member => ({
             team_id: teamId,
