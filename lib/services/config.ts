@@ -47,9 +47,9 @@ export async function getDistricts(): Promise<District[]> {
 
 export async function getActiveDistricts(): Promise<District[]> {
     const districts = await getDistricts();
-    console.log('All districts from getDistricts:', districts);
+    // console.log('All districts from getDistricts:', districts); // Removed for production security
     const activeDistricts = districts.filter(d => d.is_active).sort((a, b) => a.display_order - b.display_order);
-    console.log('Active districts after filtering:', activeDistricts);
+    // console.log('Active districts after filtering:', activeDistricts); // Removed for production security
     return activeDistricts;
 }
 
@@ -123,9 +123,9 @@ async function loadDistrictsCache(): Promise<void> {
             throw error;
         }
 
-        console.log('Raw districts data from database:', data);
+        // console.log('Raw districts data from database:', data); // Removed for production security
         districtsCache = data || [];
-        console.log('Districts cache set to:', districtsCache);
+        // console.log('Districts cache set to:', districtsCache); // Removed for production security
     } catch (error) {
         console.error('Error loading districts:', error);
         districtsCache = [];

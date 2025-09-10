@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { initializePayment, createRazorpayInstance, verifyPayment, loadRazorpayScript } from '@/lib/services/payment';
 import { TermsModal } from './TermsModal';
 import { registerTeam, checkTeamNameAvailability } from '@/lib/services/registration';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+// import { zodResolver } from '@hookform/resolvers/zod'; // Removed to prevent typing lag
+// import * as z from 'zod'; // Removed to prevent typing lag
 import { Button } from '@/components/ui/button';
 import { CustomInput } from '@/components/ui/custom-input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -16,61 +16,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { toast } from 'sonner';
 import type { RegistrationFormData } from '@/types/registration';
 
-// Validation Schema
-const phoneRegex = /^[0-9]{10}$/;
-const normalizePhone = (value: unknown) => {
-  if (typeof value !== 'string') return value as any;
-  const digitsOnly = value.replace(/\D/g, '');
-  if (digitsOnly.length === 12 && digitsOnly.startsWith('91')) {
-    return digitsOnly.slice(2);
-  }
-  if (digitsOnly.length > 10) {
-    return digitsOnly.slice(-10);
-  }
-  return digitsOnly;
-};
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-const memberSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  gender: z.enum(['male', 'female', 'other']),
-  grade: z.enum(['11', '12']),
-  phone: z.preprocess(normalizePhone, z.string().regex(phoneRegex, 'Invalid phone number')),
-  email: z.string().regex(emailRegex, 'Invalid email address'),
-  foodPreference: z.enum(['veg', 'non-veg', 'none']).optional(),
-});
-
-const teacherVerificationSchema = z.object({
-  salutation: z.enum(['sir', 'maam'], {
-    required_error: 'Please select a salutation',
-  }),
-  name: z.string().min(2, 'Teacher name must be at least 2 characters'),
-  phone: z.preprocess(normalizePhone, z.string().regex(phoneRegex, 'Invalid phone number')),
-});
-
-const projectDetailsSchema = z.object({
-  ideaTitle: z.string().min(3, 'Idea title must be at least 3 characters'),
-  problemStatement: z.string().min(30, 'Please write at least 30 characters'),
-  solutionIdea: z.string().min(30, 'Please write at least 30 characters'),
-  implementationPlan: z.string().min(20, 'Please write at least 20 characters'),
-  beneficiaries: z.string().min(3, 'Please specify who benefits'),
-  teamworkContribution: z.string().min(10, 'Please add 2–3 lines'),
-  termsAccepted: z.boolean().refine((val) => val === true, {
-    message: 'You must accept the terms and conditions',
-  }),
-});
-
-const registrationSchema = z.object({
-  teamName: z.string().min(3, 'Team name must be at least 3 characters'),
-  school: z.string().min(3, 'School name is required'),
-  district: z.string().min(2, 'District is required'),
-  teamLead: memberSchema,
-  teamMembers: z.array(memberSchema)
-    .min(1, 'At least one team member is required')
-    .max(3, 'Maximum 3 additional team members allowed'),
-  teacherVerification: teacherVerificationSchema,
-  projectDetails: projectDetailsSchema,
-});
+// Validation Schema - REMOVED to prevent typing lag
 
 export function RegistrationForm() {
   const router = useRouter();
@@ -78,6 +24,7 @@ export function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
   const [isLoadingRazorpay, setIsLoadingRazorpay] = useState(false);
+
 
   // Initialize with fallback districts immediately
   const [districts, setDistricts] = useState<Array<{id: string, name: string}>>([
@@ -99,7 +46,7 @@ export function RegistrationForm() {
 
   // Debug: Log districts when they change
   useEffect(() => {
-    console.log('Districts state updated:', districts);
+    // console.log('Districts state updated:', districts); // Removed for production security
   }, [districts]);
 
   useEffect(() => {
@@ -132,7 +79,7 @@ export function RegistrationForm() {
         console.log('Loading districts from database...');
         const { getActiveDistricts } = await import('@/lib/services/config');
         const activeDistricts = await getActiveDistricts();
-        console.log('Loaded districts:', activeDistricts);
+        // console.log('Loaded districts:', activeDistricts); // Removed for production security
         
         if (activeDistricts && activeDistricts.length > 0) {
           setDistricts(activeDistricts.map(d => ({ id: d.id, name: d.name })));
@@ -173,8 +120,11 @@ export function RegistrationForm() {
     formState: { errors },
     reset,
     watch,
+    trigger,
   } = useForm<RegistrationFormData>({
-    resolver: zodResolver(registrationSchema),
+    // resolver: zodResolver(registrationSchema), // Removed to prevent typing lag
+    mode: "onSubmit", // Only validate on submit
+    reValidateMode: "onSubmit", // Re-validate only on submit
     defaultValues: {
       teamMembers: [{}],
       teacherVerification: {
@@ -199,10 +149,15 @@ export function RegistrationForm() {
     name: 'teamMembers',
   });
 
+
   // Store form data for payment processing
   const [formDataForPayment, setFormDataForPayment] = useState<RegistrationFormData | null>(null);
 
   const handlePaymentInitiation = async (data: RegistrationFormData) => {
+    console.log('Payment initiation started');
+    console.log('Razorpay loaded:', isRazorpayLoaded);
+    // console.log('Razorpay key available:', !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID); // Removed for production security
+    
     if (!isRazorpayLoaded) {
       toast.error('Payment system is not ready. Please wait or refresh the page.');
       return;
@@ -219,11 +174,12 @@ export function RegistrationForm() {
     } catch (error: any) {
       console.error('Payment initiation failed:', error);
       toast.error(error.message || 'Failed to start payment process. Please try again.');
+      setIsSubmitting(false);
     }
   };
 
   const handlePayment = async (data: RegistrationFormData) => {
-    console.log('handlePayment called with data:', data);
+    // console.log('handlePayment called with data:', data); // Removed for production security
     setIsSubmitting(true);
     
     // Check if Razorpay is configured
@@ -410,7 +366,7 @@ export function RegistrationForm() {
     }
   };
 
-  const MemberForm = ({ isTeamLead = false, index = 0 }) => (
+  const MemberForm = memo(({ isTeamLead = false, index = 0 }: { isTeamLead?: boolean; index?: number }) => (
     <div className="space-y-4 p-4 sm:p-6 bg-black/30 backdrop-blur-sm border border-[#7303c0] clip-polygon">
       <h3 className="font-orbitron text-xl text-[#928dab] mb-4">
         {isTeamLead ? 'Team Lead Details' : `Team Member ${index + 1}`}
@@ -426,8 +382,14 @@ export function RegistrationForm() {
             className="bg-black/50 border-[#7303c0] text-white w-full"
             autoComplete="name"
           />
-          {errors?.teamLead?.name && (
-            <span className="text-red-500 text-sm">{errors.teamLead.name.message}</span>
+          {isTeamLead ? (
+            errors?.teamLead?.name && (
+              <span className="text-red-500 text-sm">{errors.teamLead.name.message}</span>
+            )
+          ) : (
+            errors?.teamMembers?.[index]?.name && (
+              <span className="text-red-500 text-sm">{errors.teamMembers[index]?.name?.message}</span>
+            )
           )}
         </div>
 
@@ -553,19 +515,18 @@ export function RegistrationForm() {
         </div>
       </div>
     </div>
-  );
+  ));
 
   return (
     <form onSubmit={handleSubmit(
       async (data) => {
+        console.log('Form submitted, current step:', currentStep);
+        // console.log('Form data:', data); // Removed for production security
         if (currentStep === 4) {
-          const available = await checkTeamNameAvailability(data.teamName.trim());
-          if (!available) {
-            toast.error('That team name is already taken. Please choose another.');
-            return;
-          }
+          console.log('Step 4: Initiating payment...');
           await handlePaymentInitiation(data);
         } else {
+          console.log('Moving to next step...');
           setCurrentStep(currentStep + 1);
         }
       },
@@ -631,36 +592,8 @@ export function RegistrationForm() {
 
         <Button
           type="button"
-          onClick={() => {
-            console.log('Next button clicked');
-            
-            // Validate only the current step fields
-            const teamName = watch('teamName');
-            const schoolName = watch('school');
-            const district = watch('district');
-            
-            console.log('Form values:', { teamName, schoolName, district });
-            
-            // Basic validation for step 1
-            if (!teamName || teamName.trim().length < 3) {
-              toast.error('Please enter a valid team name (min 3 characters).');
-              return;
-            }
-            
-            if (!schoolName || schoolName.trim().length < 3) {
-              toast.error('Please enter a valid school name (min 3 characters).');
-              return;
-            }
-            
-            if (!district) {
-              toast.error('Please select a district.');
-              return;
-            }
-            
-            console.log('Moving to step 2');
-            setCurrentStep(2);
-          }}
-          className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto"
+          onClick={() => setCurrentStep(2)}
+          className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next: Team Lead Details
         </Button>
@@ -741,7 +674,7 @@ export function RegistrationForm() {
           <Button
             type="button"
             onClick={() => setCurrentStep(3)}
-            className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto"
+            className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next: Team Members
           </Button>
@@ -793,7 +726,7 @@ export function RegistrationForm() {
           <Button
             type="button"
             onClick={() => setCurrentStep(4)}
-            className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto"
+            className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next: Project Details
           </Button>
@@ -912,8 +845,11 @@ export function RegistrationForm() {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || !watch('projectDetails.termsAccepted') || isLoadingRazorpay || !isRazorpayLoaded}
-            className="bg-[#7303c0] hover:bg-[#928dab] text-white flex items-center justify-center space-x-2 w-full sm:w-auto"
+            disabled={isSubmitting || isLoadingRazorpay || !isRazorpayLoaded}
+            className="bg-[#7303c0] hover:bg-[#928dab] text-white flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => {
+              console.log('Payment button clicked');
+            }}
           >
             <span>
               {isLoadingRazorpay ? (

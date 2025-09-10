@@ -29,7 +29,7 @@ const Timeline: React.FC = () => {
       title: "REGISTRATION CLOSES",
       description: "Final call for participants. Prepare for evaluation.",
       time: "23:59",
-      date: "SEPT 20",
+      date: "SEPT 25",
       icon: Calendar,
       status: 'upcoming'
     },

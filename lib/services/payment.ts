@@ -18,7 +18,7 @@ interface PaymentOptions {
 }
 
 export async function initializePayment(options: PaymentOptions): Promise<{ success: boolean; orderId?: string; error?: string }> {
-    console.log('initializePayment called with options:', options);
+    // console.log('initializePayment called with options:', options); // Removed for production security
     try {
         // Load Razorpay script
         console.log('Loading Razorpay script...');
@@ -64,7 +64,7 @@ export async function initializePayment(options: PaymentOptions): Promise<{ succ
         }
 
         const orderData = await response.json();
-        console.log('Order created successfully:', orderData);
+        // console.log('Order created successfully:', orderData); // Removed for production security
 
         return {
             success: true,
@@ -104,7 +104,7 @@ export async function createRazorpayInstance(
         throw new Error('Razorpay key not found');
     }
 
-    console.log('Creating Razorpay instance with key:', RAZORPAY_KEY);
+    // console.log('Creating Razorpay instance with key:', RAZORPAY_KEY); // Removed for production security
 
     // Get dynamic configuration values
     const registrationFee = await getRegistrationFee();
@@ -142,7 +142,7 @@ export async function createRazorpayInstance(
             },
         },
         handler: (response: any) => {
-            console.log('Payment successful, response:', response);
+            // console.log('Payment successful, response:', response); // Removed for production security
             onSuccess(response);
         },
         // Add error handler
@@ -153,7 +153,7 @@ export async function createRazorpayInstance(
         },
     });
 
-    console.log('Razorpay instance created successfully');
+    // console.log('Razorpay instance created successfully'); // Removed for production security
     return razorpay;
 }
 

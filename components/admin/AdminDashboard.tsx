@@ -78,7 +78,6 @@ export function AdminDashboard() {
   // Memoized stats refresh function
   const loadDashboardStats = useCallback(async () => {
     try {
-      console.log('Loading dashboard stats...');
       
       // Direct queries without cache
       const [
@@ -99,27 +98,9 @@ export function AdminDashboard() {
         supabase.from('payments').select('amount').eq('payment_status', 'completed')
       ]);
 
-      console.log('Dashboard query results:', {
-        totalRegistrations, totalError,
-        pendingRegistrations, pendingError,
-        shortlistedRegistrations, shortlistedError,
-        rejectedRegistrations, rejectedError,
-        verifiedRegistrations, verifiedError,
-        teacherVerifiedCount, teacherError,
-        payments, paymentsError
-      });
 
       const totalRevenue = payments?.reduce((sum: number, payment: any) => sum + (Number(payment.amount) || 0), 0) || 0;
 
-      console.log('Dashboard stats loaded:', {
-        totalRegistrations: totalRegistrations || 0,
-        pendingRegistrations: pendingRegistrations || 0,
-        shortlistedRegistrations: shortlistedRegistrations || 0,
-        rejectedRegistrations: rejectedRegistrations || 0,
-        verifiedRegistrations: verifiedRegistrations || 0,
-        teacherVerifiedCount: teacherVerifiedCount || 0,
-        totalRevenue,
-      });
 
         setStats({
         totalRegistrations: totalRegistrations || 0,
