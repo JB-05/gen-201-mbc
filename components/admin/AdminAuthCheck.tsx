@@ -20,15 +20,20 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
   const [password, setPassword] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
 
+  // Add timeout to prevent infinite loading
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.log('AdminAuthCheck: Loading timeout, showing login form');
+        setLoading(false);
+      }
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [loading]);
+
   const checkAuth = useCallback(async () => {
     try {
-      // Check if Supabase is properly configured
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-        console.error('Supabase environment variables not configured');
-        setLoading(false);
-        return;
-      }
-      
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
@@ -62,6 +67,7 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
 
   const checkAdminStatus = async (userId: string) => {
     try {
+      console.log('Checking admin status for user:', userId);
       const { data, error } = await supabase
         .from('admins')
         .select('id')
@@ -74,6 +80,7 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
         return;
       }
 
+      console.log('Admin check result:', { data, isAdmin: !!data });
       setIsAdmin(!!data);
     } catch (error) {
       console.error('Admin status check error:', error);
@@ -108,6 +115,7 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
   };
 
   if (loading || (user && isAdmin === null)) {
+    console.log('AdminAuthCheck: Still loading', { loading, user: !!user, isAdmin });
     return <LoadingScreen />;
   }
 
