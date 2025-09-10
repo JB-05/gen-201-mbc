@@ -32,7 +32,7 @@ export default function Contact() {
           </h2>
           <div className="w-24 h-1 bg-[#7303c0] mx-auto mb-8 clip-polygon"></div>
           <p className="text-[#928dab] text-lg">
-            Have questions? Ready to join the revolution? Let's connect.
+            Have questions? Ready to join the revolution? Let&apos;s connect.
           </p>
         </div>
 

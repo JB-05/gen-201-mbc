@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
-  images: { 
+  images: {
     unoptimized: true,
     formats: ['image/webp', 'image/avif'],
   },

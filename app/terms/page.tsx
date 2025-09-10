@@ -128,7 +128,7 @@ export default function TermsPage() {
                       <li>Payment delays</li>
                       <li>Duplicate payments</li>
                     </ul>
-                    <p>These issues may arise from either Razorpay or the participant's banking provider.</p>
+                    <p>These issues may arise from either Razorpay or the participant&apos;s banking provider.</p>
                   </div>
                 </div>
 

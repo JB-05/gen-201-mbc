@@ -517,6 +517,8 @@ export function RegistrationForm() {
     </div>
   ));
 
+  MemberForm.displayName = 'MemberForm';
+
   return (
     <form onSubmit={handleSubmit(
       async (data) => {
@@ -626,7 +628,7 @@ export function RegistrationForm() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="maam" id="salutation-maam" />
-                      <label htmlFor="salutation-maam">Ma'am</label>
+                      <label htmlFor="salutation-maam">Ma&apos;am</label>
                     </div>
                   </RadioGroup>
                 )}

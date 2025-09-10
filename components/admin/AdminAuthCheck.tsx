@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { LoadingScreen } from '@/components/LoadingScreen';
@@ -20,6 +20,27 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
   const [password, setPassword] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
 
+  const checkAuth = useCallback(async () => {
+    try {
+      // Check if Supabase is properly configured
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        console.error('Supabase environment variables not configured');
+        setLoading(false);
+        return;
+      }
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser(session.user);
+        await checkAdminStatus(session.user.id);
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     checkAuth();
 
@@ -37,21 +58,7 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
     );
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setUser(session.user);
-        await checkAdminStatus(session.user.id);
-      }
-    } catch (error) {
-      console.error('Auth check error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [checkAuth]);
 
   const checkAdminStatus = async (userId: string) => {
     try {
@@ -152,7 +159,7 @@ export function AdminAuthCheck({ children }: AdminAuthCheckProps) {
             Access Denied
           </h1>
           <p className="text-[#928dab] mb-6">
-            You don't have admin privileges to access this page.
+            You don&apos;t have admin privileges to access this page.
           </p>
           <Button
             onClick={handleSignOut}

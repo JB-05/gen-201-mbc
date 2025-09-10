@@ -14,7 +14,7 @@ export default function About() {
             <div>
               <h3 className="font-orbitron font-bold text-2xl mb-4 text-[#7303c0]">THE CHALLENGE</h3>
               <p className="text-[#928dab] leading-relaxed mb-6">
-                GEN 201 is not just another hackathon—it's a battleground where the brightest minds converge to architect the future. Over 24 intense hours, participants will push the boundaries of innovation, creating solutions that will define tomorrow's technological landscape.
+                GEN 201 is not just another hackathon—it&apos;s a battleground where the brightest minds converge to architect the future. Over 24 intense hours, participants will push the boundaries of innovation, creating solutions that will define tomorrow&apos;s technological landscape.
               </p>
               <p className="text-[#928dab] leading-relaxed">
                 This is your chance to collaborate with like-minded visionaries, learn from industry experts, and transform abstract ideas into tangible reality.

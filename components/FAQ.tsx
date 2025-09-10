@@ -49,7 +49,7 @@ export default function FAQ() {
           </h2>
           <div className="w-24 h-1 bg-[#7303c0] mx-auto mb-8 clip-polygon"></div>
           <p className="text-[#928dab] text-lg">
-            Got questions? We've got answers. Everything you need to know about GEN 201.
+            Got questions? We&apos;ve got answers. Everything you need to know about GEN 201.
           </p>
         </div>
 

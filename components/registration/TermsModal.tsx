@@ -45,7 +45,7 @@ export function TermsModal() {
           <section>
             <h3 className="text-lg font-bold text-[#7303c0] mb-2">Payment Gateway Disclaimer</h3>
             <p>All payments are processed securely through Razorpay.</p>
-            <p className="mt-2 text-sm">The Organizing Committee, Department of AI, Mar Baselios Christian College of Engineering and Technology, Kuttikanam, and the Gen 201 Team shall not be responsible for technical issues, transaction failures, delays, or duplicate payments caused by the Razorpay platform or the participant's banking/payment provider.</p>
+            <p className="mt-2 text-sm">The Organizing Committee, Department of AI, Mar Baselios Christian College of Engineering and Technology, Kuttikanam, and the Gen 201 Team shall not be responsible for technical issues, transaction failures, delays, or duplicate payments caused by the Razorpay platform or the participant&apos;s banking/payment provider.</p>
           </section>
 
           <section>
