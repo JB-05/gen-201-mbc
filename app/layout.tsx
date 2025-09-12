@@ -20,6 +20,11 @@ const rajdhani = Rajdhani({
 export const metadata: Metadata = {
   title: 'GEN 201 - Hackathon 2025',
   description: 'Creating the next generation - Join GEN 201 Hackathon organized by CSE (AI) Department',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

@@ -79,7 +79,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-orbitron font-bold text-[#7303c0] mb-4">2. Team Formation</h2>
               <div className="space-y-2 text-[#928dab]">
-                <p>Teams may consist of 1 to 4 members, with one designated leader.</p>
+                <p>Teams may consist of 2 to 4 members, with one designated leader.</p>
                 <p>Inter-school teams are permitted, provided all members are from Kerala schools.</p>
                 <p>Teams may have a teacher/mentor, but mentors cannot directly work on the project.</p>
               </div>
@@ -105,7 +105,7 @@ export default function TermsPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-[#7303c0] mb-2">3.2 Payment Terms</h3>
                   <div className="space-y-2">
-                    <p>The registration fee is ₹500 (plus applicable Razorpay commission/extra charges).</p>
+                    <p>The registration fee is ₹50 (plus applicable Razorpay commission/extra charges).</p>
                     <p>This fee is collected solely for administrative processing and idea submission.</p>
                     <p className="font-medium">Important Payment Conditions:</p>
                     <ul className="list-disc list-inside ml-4 space-y-1">
@@ -242,9 +242,11 @@ export default function TermsPage() {
                   rel="noopener noreferrer"
                   className="inline-block h-8 transition-transform hover:scale-105 hover:opacity-80"
                 >
-                  <img
+                  <Image
                     src="/assets/ugenix.svg"
                     alt="UgeniX"
+                    width={100}
+                    height={32}
                     className="h-full w-auto"
                   />
                 </a>

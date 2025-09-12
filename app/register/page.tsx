@@ -99,9 +99,11 @@ export default function RegisterPage() {
                 rel="noopener noreferrer"
                 className="inline-block h-8 transition-transform hover:scale-105 hover:opacity-80"
               >
-                <img
+                <Image
                   src="/assets/ugenix.svg"
                   alt="UgeniX"
+                  width={100}
+                  height={32}
                   className="h-full w-auto"
                 />
               </a>

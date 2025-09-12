@@ -12,7 +12,7 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:gen201hackathon2025@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
+    const mailtoLink = `mailto:gen201hackathon@mbcpeermade.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
     window.location.href = mailtoLink;
   };
 
@@ -44,11 +44,11 @@ export default function Contact() {
                 <div className="space-y-4">
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">LOCATION</div>
-                    <div className="text-[#928dab]">AI Department<br />Main Campus</div>
+                    <div className="text-[#928dab]">Main Campus</div>
                   </div>
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">DATE & TIME</div>
-                    <div className="text-[#928dab]">October 10-11, 2025<br />24 Hours Non-stop</div>
+                    <div className="text-[#928dab]">October 10-11, 2025<br />24 Hours</div>
                   </div>
                 </div>
               </div>
@@ -58,7 +58,7 @@ export default function Contact() {
                 <div className="space-y-4">
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">EMAIL</div>
-                    <div className="text-[#928dab]">gen201hackathon2025@gmail.com</div>
+                    <div className="text-[#928dab]">gen201hackathon@mbcpeermade.com</div>
                   </div>
                   <div>
                     <div className="font-orbitron font-bold text-sm text-[#7303c0] mb-1">PHONE</div>

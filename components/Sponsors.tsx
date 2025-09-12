@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function Sponsors() {
   const sponsors = [
     { name: 'Tech Corp', logo: 'https://images.pexels.com/photos/207580/pexels-photo-207580.jpeg?auto=compress&cs=tinysrgb&w=200&h=100&fit=crop' },
@@ -25,9 +27,11 @@ export default function Sponsors() {
           {sponsors.map((sponsor, index) => (
             <div key={index} className="group">
               <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-6 clip-polygon hover:border-[#928dab] transition-all duration-300 relative overflow-hidden">
-                <img
+                <Image
                   src={sponsor.logo}
                   alt={sponsor.name}
+                  width={200}
+                  height={80}
                   className="w-full h-20 object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#7303c0]/5 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
@@ -43,7 +47,7 @@ export default function Sponsors() {
               Join us in shaping the future. Partner with GEN 201 and connect with brilliant minds.
             </p>
             <a
-              href="mailto:gen201hackathon2025@gmail.com"
+              href="mailto:gen201hackathon@mbcpeermade.com"
               className="inline-block bg-[#7303c0] text-white px-6 py-3 clip-polygon font-orbitron font-bold hover:bg-[#928dab] transition-colors duration-200"
             >
               CONTACT US

@@ -40,28 +40,28 @@ export default function Footer() {
             <h3 className="font-orbitron font-bold text-lg mb-4 text-[#7303c0]">LEGAL</h3>
             <div className="space-y-2">
               <Link
-                href="/terms"
+                href="/contact"
                 className="block text-[#928dab] hover:text-[#7303c0] text-sm transition-colors duration-200"
               >
-                Terms & Conditions
+                Contact Us
               </Link>
               <Link
-                href="/terms#eligibility"
+                href="/terms-conditions"
                 className="block text-[#928dab] hover:text-[#7303c0] text-sm transition-colors duration-200"
               >
-                Eligibility
+                Terms and Conditions
               </Link>
               <Link
-                href="/terms#rules"
+                href="/cancellations-refunds"
                 className="block text-[#928dab] hover:text-[#7303c0] text-sm transition-colors duration-200"
               >
-                Rules & Guidelines
+                Cancellations and Refunds
               </Link>
               <Link
-                href="/terms#disclaimer"
+                href="/privacy-policy"
                 className="block text-[#928dab] hover:text-[#7303c0] text-sm transition-colors duration-200"
               >
-                Disclaimer
+                Privacy Policy
               </Link>
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function Footer() {
           <div>
             <h3 className="font-orbitron font-bold text-lg mb-4 text-[#7303c0]">CONNECT</h3>
             <div className="space-y-2">
-              <div className="text-[#928dab] text-sm">gen201hackathon2025@gmail.com</div>
+              <div className="text-[#928dab] text-sm">gen201hackathon@mbcpeermade.com</div>
               <div>Noel Biju :</div>
               <div className="text-[#928dab] text-sm">+91 88482 58798</div>
               <div>Selma Anna Saju :</div>
@@ -97,9 +97,11 @@ export default function Footer() {
                 </a>
               </div>
               <div className="flex items-center mt-4">
-                <img 
-                  src="assets/deptOfAI.png"
+                <Image 
+                  src="/assets/deptOfAI.png"
                   alt="Department of AI"
+                  width={120}
+                  height={60}
                   className="h-15 w-auto transform transition-transform duration-200 mt-5"
                 />
               </div>
@@ -122,9 +124,11 @@ export default function Footer() {
                 rel="noopener noreferrer" 
                 className="inline-block h-8 transition-transform hover:scale-105 hover:opacity-80"
               >
-                <img 
-                  src="assets/ugenix.svg"
+                <Image 
+                  src="/assets/ugenix.svg"
                   alt="UgeniX" 
+                  width={100}
+                  height={32}
                   className="h-full w-auto"
                 />
               </a>

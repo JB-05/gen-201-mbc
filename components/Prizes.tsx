@@ -103,7 +103,7 @@ export default function Prizes() {
           <div className="flex justify-center items-center">
             <div className="bg-black/30 border border-[#7303c0] p-4 md:p-6 clip-polygon backdrop-blur-sm max-w-lg w-full">
               <h4 className="font-orbitron font-bold text-base md:text-lg mb-2 md:mb-3 text-[#928dab]">TOP TEAMS</h4>
-              <p className="text-[#928dab] text-xs md:text-sm mb-3 md:mb-4">All top teams certificates of participation.</p>
+              <p className="text-[#928dab] text-xs md:text-sm mb-3 md:mb-4">All top teams get certificates of participation.</p>
               <div className="flex items-center text-[#928dab]">
                 <div className="w-2 h-2 bg-[#7303c0] mr-3 clip-polygon"></div>
               </div>

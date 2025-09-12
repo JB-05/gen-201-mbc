@@ -98,7 +98,7 @@ export async function createRazorpayInstance(
     onSuccess: (response: any) => void,
     onFailure: (error: any) => void
 ) {
-    console.log('createRazorpayInstance called with orderId:', orderId);
+    console.log('createRazorpayInstance called with orderId');
     if (!RAZORPAY_KEY) {
         console.error('Razorpay key not found in environment variables');
         throw new Error('Razorpay key not found');

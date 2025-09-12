@@ -376,7 +376,7 @@ export function RegistrationForm() {
         {/* Name Field */}
         <div>
           <CustomInput
-            {...register(isTeamLead ? 'teamLead.name' : `teamMembers.${index}.name`)}
+            {...register(isTeamLead ? 'teamLead.name' : `teamMembers.${index}.name`, { required: 'Name is required' })}
             placeholder="Full Name"
             type="text"
             className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -399,6 +399,7 @@ export function RegistrationForm() {
           <Controller
             name={isTeamLead ? 'teamLead.gender' : `teamMembers.${index}.gender`}
             control={control}
+            rules={{ required: 'Gender is required' }}
             render={({ field }) => (
               <RadioGroup
                 value={field.value}
@@ -428,6 +429,7 @@ export function RegistrationForm() {
           <Controller
             name={isTeamLead ? 'teamLead.grade' : `teamMembers.${index}.grade`}
             control={control}
+            rules={{ required: 'Grade is required' }}
             render={({ field }) => (
               <RadioGroup
                 value={field.value}
@@ -451,7 +453,7 @@ export function RegistrationForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <CustomInput
-              {...register(isTeamLead ? 'teamLead.phone' : `teamMembers.${index}.phone`)}
+              {...register(isTeamLead ? 'teamLead.phone' : `teamMembers.${index}.phone`, { required: 'Phone is required', pattern: { value: /^[0-9]{10}$/, message: 'Enter 10-digit phone' } })}
               placeholder="WhatsApp Number"
               type="tel"
               inputMode="numeric"
@@ -469,7 +471,7 @@ export function RegistrationForm() {
 
           <div>
             <CustomInput
-              {...register(isTeamLead ? 'teamLead.email' : `teamMembers.${index}.email`)}
+              {...register(isTeamLead ? 'teamLead.email' : `teamMembers.${index}.email`, { required: 'Email is required', pattern: { value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Enter a valid email' } })}
               placeholder="Email Address"
               type="email"
               className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -491,6 +493,7 @@ export function RegistrationForm() {
           <Controller
             name={isTeamLead ? 'teamLead.foodPreference' : `teamMembers.${index}.foodPreference`}
             control={control}
+            rules={{ required: 'Food preference is required' }}
             render={({ field }) => (
               <RadioGroup
                 value={field.value}
@@ -546,7 +549,7 @@ export function RegistrationForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <CustomInput
-                {...register('teamName')}
+                {...register('teamName', { required: 'Team name is required', minLength: { value: 3, message: 'At least 3 characters' } })}
                 placeholder="Team Name"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -558,7 +561,7 @@ export function RegistrationForm() {
             
             <div>
               <CustomInput
-                {...register('school')}
+                {...register('school', { required: 'School name is required', minLength: { value: 3, message: 'At least 3 characters' } })}
                 placeholder="School Name"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -572,6 +575,7 @@ export function RegistrationForm() {
               <Controller
                 name={'district'}
                 control={control}
+                rules={{ required: 'District is required' }}
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="bg-black/50 border-[#7303c0] text-white w-full">
@@ -594,7 +598,14 @@ export function RegistrationForm() {
 
         <Button
           type="button"
-          onClick={() => setCurrentStep(2)}
+          onClick={async () => {
+            const ok = await trigger(['teamName', 'school', 'district']);
+            if (!ok) {
+              toast.error('Please complete Team Details.');
+              return;
+            }
+            setCurrentStep(2);
+          }}
           className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next: Team Lead Details
@@ -616,6 +627,7 @@ export function RegistrationForm() {
               <Controller
                 name={'teacherVerification.salutation'}
                 control={control}
+                rules={{ required: 'Salutation is required' }}
                 render={({ field }) => (
                   <RadioGroup
                     value={field.value}
@@ -640,7 +652,7 @@ export function RegistrationForm() {
 
             <div>
               <CustomInput
-                {...register('teacherVerification.name')}
+                {...register('teacherVerification.name', { required: "Teacher's name is required" })}
                 placeholder="Teacher's Name"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -652,7 +664,7 @@ export function RegistrationForm() {
 
             <div>
               <CustomInput
-                {...register('teacherVerification.phone')}
+                {...register('teacherVerification.phone', { required: "Teacher's phone is required", pattern: { value: /^[0-9]{10}$/, message: 'Enter 10-digit phone' } })}
                 placeholder="Teacher's Phone Number"
                 type="tel"
                 inputMode="numeric"
@@ -675,7 +687,19 @@ export function RegistrationForm() {
           </Button>
           <Button
             type="button"
-            onClick={() => setCurrentStep(3)}
+            onClick={async () => {
+              const okLead = await trigger([
+                'teamLead.name', 'teamLead.gender', 'teamLead.grade', 'teamLead.phone', 'teamLead.email'
+              ]);
+              const okTeacher = await trigger([
+                'teacherVerification.salutation', 'teacherVerification.name', 'teacherVerification.phone'
+              ]);
+              if (!okLead || !okTeacher) {
+                toast.error('Please complete Team Lead and Teacher Verification.');
+                return;
+              }
+              setCurrentStep(3);
+            }}
             className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next: Team Members
@@ -727,7 +751,26 @@ export function RegistrationForm() {
           </Button>
           <Button
             type="button"
-            onClick={() => setCurrentStep(4)}
+            onClick={async () => {
+              // Validate all member fields dynamically
+              const memberFields: string[] = [];
+              fields.forEach((_, i) => {
+                memberFields.push(
+                  `teamMembers.${i}.name`,
+                  `teamMembers.${i}.gender`,
+                  `teamMembers.${i}.grade`,
+                  `teamMembers.${i}.phone`,
+                  `teamMembers.${i}.email`,
+                  `teamMembers.${i}.foodPreference`,
+                );
+              });
+              const ok = await trigger(memberFields as any);
+              if (!ok) {
+                toast.error('Please complete Team Members details.');
+                return;
+              }
+              setCurrentStep(4);
+            }}
             className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next: Project Details
@@ -743,7 +786,7 @@ export function RegistrationForm() {
           <div className="space-y-4">
             <div>
               <CustomInput
-                {...register('projectDetails.ideaTitle')}
+                {...register('projectDetails.ideaTitle', { required: 'Idea title is required' })}
                 placeholder="Idea Title (e.g., Smart Water Saver)"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -755,7 +798,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.problemStatement')}
+                {...register('projectDetails.problemStatement', { required: 'Problem statement is required' })}
                 placeholder="Problem you want to solve: Why is it important? Who faces it?"
                 className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -766,7 +809,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.solutionIdea')}
+                {...register('projectDetails.solutionIdea', { required: 'Solution idea is required' })}
                 placeholder="Your solution / idea: How does it solve the problem? What makes it new?"
                 className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -777,7 +820,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.implementationPlan')}
+                {...register('projectDetails.implementationPlan', { required: 'Implementation plan is required' })}
                 placeholder="How will it work? Explain in 4–5 sentences."
                 className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -788,7 +831,7 @@ export function RegistrationForm() {
 
             <div>
               <CustomInput
-                {...register('projectDetails.beneficiaries')}
+                {...register('projectDetails.beneficiaries', { required: 'Beneficiaries are required' })}
                 placeholder="Who will benefit? (e.g., Students, farmers, parents)"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -800,7 +843,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.teamworkContribution')}
+                {...register('projectDetails.teamworkContribution', { required: 'Teamwork contribution is required' })}
                 placeholder="Teamwork: 2–3 lines on what each teammate is doing"
                 className="w-full h-24 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -814,7 +857,7 @@ export function RegistrationForm() {
               <div className="flex items-start gap-3">
                 <input
                   type="checkbox"
-                  {...register('projectDetails.termsAccepted')}
+                  {...register('projectDetails.termsAccepted', { validate: (v) => v || 'You must accept the terms to continue' })}
                   id="terms"
                   className="mt-1 w-4 h-4 rounded border-[#7303c0] bg-black/50 checked:bg-[#7303c0]"
                 />
@@ -849,8 +892,20 @@ export function RegistrationForm() {
             type="submit"
             disabled={isSubmitting || isLoadingRazorpay || !isRazorpayLoaded}
             className="bg-[#7303c0] hover:bg-[#928dab] text-white flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={() => {
-              console.log('Payment button clicked');
+            onClick={async () => {
+              // Ensure step 4 required fields are valid before submit
+              const ok = await trigger([
+                'projectDetails.ideaTitle',
+                'projectDetails.problemStatement',
+                'projectDetails.solutionIdea',
+                'projectDetails.implementationPlan',
+                'projectDetails.beneficiaries',
+                'projectDetails.teamworkContribution',
+                'projectDetails.termsAccepted',
+              ]);
+              if (!ok) {
+                toast.error('Please complete Project Details and accept terms.');
+              }
             }}
           >
             <span>
