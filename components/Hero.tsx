@@ -40,45 +40,33 @@ export default function Hero() {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden pt-16 md:pt-0">
-      {/* Neural Network Background */}
+      {/* Optimized Neural Network Background */}
       <NeuralBackground />
       
-      {/* Background Image */}
-      {/*<div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-[-10%] scale-110">
-          <Image
-            src={heroBackground}
-            alt="Hero Background"
-            fill
-            className="object-cover opacity-10 animate-[zoomInOut_20s_ease-in-out_infinite]"
-            priority
-            quality={100}
-          />
-        </div>
-      </div>*/}
-      
-      {/* Background Grid */}
-      <div className="absolute inset-0 opacity-25">
+      {/* Optimized Background Grid */}
+      <div className="absolute inset-0 opacity-20">
         <div 
-          className="absolute inset-0 animate-[floatGrid_10s_ease-in-out_infinite]" 
+          className="absolute inset-0 will-change-transform" 
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(146, 141, 171, 0.2) 1.5px, transparent 2px),
-              linear-gradient(to bottom, rgba(115, 3, 192, 0.2) 2px, transparent 2px)
+              linear-gradient(to right, rgba(146, 141, 171, 0.15) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(115, 3, 192, 0.15) 1px, transparent 1px)
             `,
-            backgroundSize: '50px 50px',
-            backdropFilter: 'blur(3px)'
+            backgroundSize: '60px 60px',
+            transform: 'translate3d(0, 0, 0)',
+            animation: 'gridFloat 15s ease-in-out infinite'
           }}
         ></div>
       </div>
       
-      {/* Animated Overlay */}
+      {/* Simplified Animated Overlay */}
       <div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20 will-change-transform"
         style={{
-          background: 'linear-gradient(45deg, transparent 0%, rgba(115, 3, 192, 0.15) 50%, transparent 100%)',
-          backgroundSize: '200% 200%',
-          animation: 'gradient 8s ease infinite'
+          background: 'linear-gradient(45deg, transparent 30%, rgba(115, 3, 192, 0.1) 50%, transparent 70%)',
+          backgroundSize: '300% 300%',
+          transform: 'translate3d(0, 0, 0)',
+          animation: 'gradientMove 12s ease-in-out infinite'
         }}
       ></div>
       

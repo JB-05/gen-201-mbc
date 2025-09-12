@@ -20,7 +20,7 @@ const Timeline: React.FC = () => {
       title: "REGISTRATION OPENS",
       description: "Begin your journey. Registration portal is now live!",
       time: "00:00",
-      date: "SEPT 1",
+      date: "SEPT 10",
       icon: Users,
       status: 'live'
     },
