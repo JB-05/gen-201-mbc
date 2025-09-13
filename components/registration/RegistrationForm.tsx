@@ -1,4 +1,4 @@
-'use client';
+{/* 'use client';
 
 import { useState, useEffect, memo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -373,10 +373,10 @@ export function RegistrationForm() {
       </h3>
 
       <div className="space-y-6">
-        {/* Name Field */}
+        //Name Field 
         <div>
           <CustomInput
-            {...register(isTeamLead ? 'teamLead.name' : `teamMembers.${index}.name`, { required: 'Name is required' })}
+            {...register(isTeamLead ? 'teamLead.name' : `teamMembers.${index}.name`)}
             placeholder="Full Name"
             type="text"
             className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -393,13 +393,12 @@ export function RegistrationForm() {
           )}
         </div>
 
-        {/* Gender Selection */}
+        // Gender Selection 
         <div>
           <label className="block text-sm font-medium text-[#928dab] mb-3">Gender</label>
           <Controller
             name={isTeamLead ? 'teamLead.gender' : `teamMembers.${index}.gender`}
             control={control}
-            rules={{ required: 'Gender is required' }}
             render={({ field }) => (
               <RadioGroup
                 value={field.value}
@@ -423,13 +422,12 @@ export function RegistrationForm() {
           />
         </div>
 
-        {/* Grade Selection */}
+        // Grade Selection 
         <div>
           <label className="block text-sm font-medium text-[#928dab] mb-3">Grade</label>
           <Controller
             name={isTeamLead ? 'teamLead.grade' : `teamMembers.${index}.grade`}
             control={control}
-            rules={{ required: 'Grade is required' }}
             render={({ field }) => (
               <RadioGroup
                 value={field.value}
@@ -449,11 +447,11 @@ export function RegistrationForm() {
           />
         </div>
 
-        {/* Contact Information */}
+       //Contact Information 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <CustomInput
-              {...register(isTeamLead ? 'teamLead.phone' : `teamMembers.${index}.phone`, { required: 'Phone is required', pattern: { value: /^[0-9]{10}$/, message: 'Enter 10-digit phone' } })}
+              {...register(isTeamLead ? 'teamLead.phone' : `teamMembers.${index}.phone`)}
               placeholder="WhatsApp Number"
               type="tel"
               inputMode="numeric"
@@ -471,7 +469,7 @@ export function RegistrationForm() {
 
           <div>
             <CustomInput
-              {...register(isTeamLead ? 'teamLead.email' : `teamMembers.${index}.email`, { required: 'Email is required', pattern: { value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Enter a valid email' } })}
+              {...register(isTeamLead ? 'teamLead.email' : `teamMembers.${index}.email`)}
               placeholder="Email Address"
               type="email"
               className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -487,13 +485,12 @@ export function RegistrationForm() {
           </div>
         </div>
 
-        {/* Food Preference */}
+        // Food Preference 
         <div>
           <label className="block text-sm font-medium text-[#928dab] mb-3">Food Preference</label>
           <Controller
             name={isTeamLead ? 'teamLead.foodPreference' : `teamMembers.${index}.foodPreference`}
             control={control}
-            rules={{ required: 'Food preference is required' }}
             render={({ field }) => (
               <RadioGroup
                 value={field.value}
@@ -541,7 +538,7 @@ export function RegistrationForm() {
       }
     )} noValidate className="max-w-4xl mx-auto space-y-6 p-3 sm:space-y-8 sm:p-4">
       <fieldset disabled={isSubmitting} className="space-y-8">
-      {/* Step 1: Team Details */}
+      // Step 1: Team Details 
       <div className={`space-y-6 ${currentStep !== 1 && 'hidden'}`}>
         <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-4 sm:p-6 clip-polygon">
           <h3 className="font-orbitron text-xl text-[#928dab] mb-4">Team Details</h3>
@@ -549,7 +546,7 @@ export function RegistrationForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <CustomInput
-                {...register('teamName', { required: 'Team name is required', minLength: { value: 3, message: 'At least 3 characters' } })}
+                {...register('teamName')}
                 placeholder="Team Name"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -561,7 +558,7 @@ export function RegistrationForm() {
             
             <div>
               <CustomInput
-                {...register('school', { required: 'School name is required', minLength: { value: 3, message: 'At least 3 characters' } })}
+                {...register('school')}
                 placeholder="School Name"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -575,7 +572,6 @@ export function RegistrationForm() {
               <Controller
                 name={'district'}
                 control={control}
-                rules={{ required: 'District is required' }}
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="bg-black/50 border-[#7303c0] text-white w-full">
@@ -598,25 +594,18 @@ export function RegistrationForm() {
 
         <Button
           type="button"
-          onClick={async () => {
-            const ok = await trigger(['teamName', 'school', 'district']);
-            if (!ok) {
-              toast.error('Please complete Team Details.');
-              return;
-            }
-            setCurrentStep(2);
-          }}
+          onClick={() => setCurrentStep(2)}
           className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next: Team Lead Details
         </Button>
       </div>
 
-      {/* Step 2: Team Lead */}
+      // Step 2: Team Lead 
       <div className={`space-y-6 ${currentStep !== 2 && 'hidden'}`}>
         <MemberForm isTeamLead={true} />
         
-        {/* Teacher Verification Section */}
+        // Teacher Verification Section 
         <div className="space-y-4 p-4 sm:p-6 bg-black/30 backdrop-blur-sm border border-[#7303c0] clip-polygon">
           <h3 className="font-orbitron text-xl text-[#928dab] mb-4">
             Teacher Verification
@@ -627,7 +616,6 @@ export function RegistrationForm() {
               <Controller
                 name={'teacherVerification.salutation'}
                 control={control}
-                rules={{ required: 'Salutation is required' }}
                 render={({ field }) => (
                   <RadioGroup
                     value={field.value}
@@ -652,7 +640,7 @@ export function RegistrationForm() {
 
             <div>
               <CustomInput
-                {...register('teacherVerification.name', { required: "Teacher's name is required" })}
+                {...register('teacherVerification.name')}
                 placeholder="Teacher's Name"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -664,7 +652,7 @@ export function RegistrationForm() {
 
             <div>
               <CustomInput
-                {...register('teacherVerification.phone', { required: "Teacher's phone is required", pattern: { value: /^[0-9]{10}$/, message: 'Enter 10-digit phone' } })}
+                {...register('teacherVerification.phone')}
                 placeholder="Teacher's Phone Number"
                 type="tel"
                 inputMode="numeric"
@@ -687,19 +675,7 @@ export function RegistrationForm() {
           </Button>
           <Button
             type="button"
-            onClick={async () => {
-              const okLead = await trigger([
-                'teamLead.name', 'teamLead.gender', 'teamLead.grade', 'teamLead.phone', 'teamLead.email'
-              ]);
-              const okTeacher = await trigger([
-                'teacherVerification.salutation', 'teacherVerification.name', 'teacherVerification.phone'
-              ]);
-              if (!okLead || !okTeacher) {
-                toast.error('Please complete Team Lead and Teacher Verification.');
-                return;
-              }
-              setCurrentStep(3);
-            }}
+            onClick={() => setCurrentStep(3)}
             className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next: Team Members
@@ -707,7 +683,7 @@ export function RegistrationForm() {
         </div>
       </div>
 
-      {/* Step 3: Team Members */}
+      // Step 3: Team Members
       <div className={`space-y-6 ${currentStep !== 3 && 'hidden'}`}>
         {fields.map((field, index) => (
           <div key={field.id} className="relative">
@@ -751,26 +727,7 @@ export function RegistrationForm() {
           </Button>
           <Button
             type="button"
-            onClick={async () => {
-              // Validate all member fields dynamically
-              const memberFields: string[] = [];
-              fields.forEach((_, i) => {
-                memberFields.push(
-                  `teamMembers.${i}.name`,
-                  `teamMembers.${i}.gender`,
-                  `teamMembers.${i}.grade`,
-                  `teamMembers.${i}.phone`,
-                  `teamMembers.${i}.email`,
-                  `teamMembers.${i}.foodPreference`,
-                );
-              });
-              const ok = await trigger(memberFields as any);
-              if (!ok) {
-                toast.error('Please complete Team Members details.');
-                return;
-              }
-              setCurrentStep(4);
-            }}
+            onClick={() => setCurrentStep(4)}
             className="bg-[#7303c0] hover:bg-[#928dab] text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next: Project Details
@@ -778,7 +735,7 @@ export function RegistrationForm() {
         </div>
       </div>
 
-      {/* Step 4: Project Details */}
+      // Step 4: Project Details 
       <div className={`space-y-6 ${currentStep !== 4 && 'hidden'}`}>
         <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0] p-4 sm:p-6 clip-polygon">
           <h3 className="font-orbitron text-xl text-[#928dab] mb-4">Project Details</h3>
@@ -786,7 +743,7 @@ export function RegistrationForm() {
           <div className="space-y-4">
             <div>
               <CustomInput
-                {...register('projectDetails.ideaTitle', { required: 'Idea title is required' })}
+                {...register('projectDetails.ideaTitle')}
                 placeholder="Idea Title (e.g., Smart Water Saver)"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -798,7 +755,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.problemStatement', { required: 'Problem statement is required' })}
+                {...register('projectDetails.problemStatement')}
                 placeholder="Problem you want to solve: Why is it important? Who faces it?"
                 className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -809,7 +766,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.solutionIdea', { required: 'Solution idea is required' })}
+                {...register('projectDetails.solutionIdea')}
                 placeholder="Your solution / idea: How does it solve the problem? What makes it new?"
                 className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -820,7 +777,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.implementationPlan', { required: 'Implementation plan is required' })}
+                {...register('projectDetails.implementationPlan')}
                 placeholder="How will it work? Explain in 4–5 sentences."
                 className="w-full h-28 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -831,7 +788,7 @@ export function RegistrationForm() {
 
             <div>
               <CustomInput
-                {...register('projectDetails.beneficiaries', { required: 'Beneficiaries are required' })}
+                {...register('projectDetails.beneficiaries')}
                 placeholder="Who will benefit? (e.g., Students, farmers, parents)"
                 type="text"
                 className="bg-black/50 border-[#7303c0] text-white w-full"
@@ -843,7 +800,7 @@ export function RegistrationForm() {
 
             <div>
               <textarea
-                {...register('projectDetails.teamworkContribution', { required: 'Teamwork contribution is required' })}
+                {...register('projectDetails.teamworkContribution')}
                 placeholder="Teamwork: 2–3 lines on what each teammate is doing"
                 className="w-full h-24 bg-black/50 border border-[#7303c0] text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#7303c0]"
               />
@@ -852,12 +809,12 @@ export function RegistrationForm() {
               )}
             </div>
 
-            {/* Terms and Conditions */}
+            // Terms and Conditions 
             <div className="mt-8">
               <div className="flex items-start gap-3">
                 <input
                   type="checkbox"
-                  {...register('projectDetails.termsAccepted', { validate: (v) => v || 'You must accept the terms to continue' })}
+                  {...register('projectDetails.termsAccepted')}
                   id="terms"
                   className="mt-1 w-4 h-4 rounded border-[#7303c0] bg-black/50 checked:bg-[#7303c0]"
                 />
@@ -892,20 +849,8 @@ export function RegistrationForm() {
             type="submit"
             disabled={isSubmitting || isLoadingRazorpay || !isRazorpayLoaded}
             className="bg-[#7303c0] hover:bg-[#928dab] text-white flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={async () => {
-              // Ensure step 4 required fields are valid before submit
-              const ok = await trigger([
-                'projectDetails.ideaTitle',
-                'projectDetails.problemStatement',
-                'projectDetails.solutionIdea',
-                'projectDetails.implementationPlan',
-                'projectDetails.beneficiaries',
-                'projectDetails.teamworkContribution',
-                'projectDetails.termsAccepted',
-              ]);
-              if (!ok) {
-                toast.error('Please complete Project Details and accept terms.');
-              }
+            onClick={() => {
+              console.log('Payment button clicked');
             }}
           >
             <span>
@@ -933,3 +878,4 @@ export function RegistrationForm() {
   );
 }
 
+ */}

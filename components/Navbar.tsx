@@ -64,7 +64,7 @@ export default function Navbar() {
               </Link>
             ))}
             <NavigationLink
-              href="/register"
+              href="https://app.makemypass.com/event/gen-201"
               className="bg-[#7303c0] text-white px-6 py-2 clip-polygon font-medium hover:bg-[#928dab] transition-colors duration-200"
               variant="button"
             >
@@ -89,7 +89,7 @@ export default function Navbar() {
         <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'} overflow-hidden bg-black/80`}>
           <div className="py-4 space-y-4 max-h-[80vh] overflow-y-auto">
             <NavigationLink
-              href="/register"
+              href="https://app.makemypass.com/event/gen-201"
               className="block bg-[#7303c0] text-white px-6 py-2 clip-polygon font-medium hover:bg-[#928dab] transition-colors duration-200 text-center"
               variant="button"
               onClick={() => setIsMenuOpen(false)}

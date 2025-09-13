@@ -40,11 +40,8 @@ export default function Hero() {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden pt-16 md:pt-0">
-      {/* Optimized Neural Network Background */}
-      <NeuralBackground />
-      
-      {/* Optimized Background Grid */}
-      <div className="absolute inset-0 opacity-20">
+      {/* Optimized Background Grid - Behind neural network */}
+      <div className="absolute inset-0 opacity-20 z-10">
         <div 
           className="absolute inset-0 will-change-transform" 
           style={{
@@ -57,6 +54,11 @@ export default function Hero() {
             animation: 'gridFloat 15s ease-in-out infinite'
           }}
         ></div>
+      </div>
+      
+      {/* Optimized Neural Network Background - On top of grid */}
+      <div className="absolute inset-0 z-20 opacity-60">
+        <NeuralBackground />
       </div>
       
       {/* Simplified Animated Overlay */}
@@ -114,7 +116,7 @@ export default function Hero() {
                 CHECK ELIGIBILITY
               </NavigationLink>
               <NavigationLink
-                href="/register"
+                href="https://app.makemypass.com/event/gen-201"
                 className="inline-block bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm sm:text-base hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 relative animate-pulse-subtle"
               >
                 REGISTER NOW

@@ -66,7 +66,7 @@ export default function RegistrationSuccessPage() {
 		`- Participation limited to Class 11 and 12 students.\n` +
 		`- Fee is non-refundable (except extraordinary situations decided by organizers).\n` +
 		`- Payment does not guarantee selection to offline hackathon.\n` +
-		`- Payments are processed by Razorpay; technical issues are not the organizer's liability.\n` +
+		`- Payments are processed through our platform; technical issues are not the organizer's liability.\n` +
 		`- Organizer decisions regarding selection/refunds are final.\n` +
 		`- The registering individual is responsible for informing all team members of these terms.`
 	), []);

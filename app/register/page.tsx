@@ -1,5 +1,3 @@
-import { RegistrationForm } from '@/components/registration/RegistrationForm';
-import { Toaster } from 'sonner';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
@@ -48,7 +46,6 @@ export default function RegisterPage() {
         <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-[#928dab] rounded-full opacity-10 blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <Toaster />
       <div className="container mx-auto px-4 relative z-10">
         {/* Gradient Flowing Header */}
         <div className="text-center relative py-8">
@@ -67,17 +64,33 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Stylized Description */}
+        {/* Redirect Message */}
         <div className="relative">
-          <p className="text-center text-[#928dab] mb-3 max-w-2xl mx-auto backdrop-blur-sm py-4 px-6 rounded-lg border border-[#7303c0]/20">
-            Registration is now open! Join us in this exciting hackathon by filling out the form below.
-            Don&apos;t miss out - secure your team&apos;s spot today. Make sure to provide accurate information for all team members.
-          </p>
-        </div>
-
-        {/* Form Container with Backdrop Blur */}
-        <div className="relative backdrop-blur-sm bg-black/30 p-6 rounded-lg border border-[#7303c0]/20">
-          <RegistrationForm />
+          <div className="text-center text-[#928dab] mb-6 max-w-2xl mx-auto backdrop-blur-sm py-8 px-6 rounded-lg border border-[#7303c0]/20">
+            <h2 className="text-xl font-orbitron text-[#7303c0] mb-4">Registration Redirect</h2>
+            <p className="mb-4">
+              Registration is now handled through our official platform. You will be redirected to complete your registration.
+            </p>
+            <p className="mb-6 text-sm">
+              The registration fee is ₹50 (plus applicable platform processing fees) for administrative processing and idea submission.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href="https://app.makemypass.com/event/gen-201"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-[#7303c0] text-white px-6 py-3 clip-arrow font-orbitron font-bold text-sm hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
+              >
+                CONTINUE TO REGISTRATION
+              </a>
+              <Link
+                href="/"
+                className="inline-block bg-transparent text-[#7303c0] px-6 py-3 border border-[#7303c0] font-orbitron font-bold text-sm hover:bg-[#7303c0] hover:text-white transition-all duration-300 transform hover:scale-105"
+              >
+                BACK TO HOME
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -105,8 +105,8 @@ export default function TermsPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-[#7303c0] mb-2">3.2 Payment Terms</h3>
                   <div className="space-y-2">
-                    <p>The registration fee is ₹50 (plus applicable Razorpay commission/extra charges).</p>
-                    <p>This fee is collected solely for administrative processing and idea submission.</p>
+                    <p>The registration fee is ₹50 (plus applicable platform processing fees).</p>
+                    <p>This fee is collected for administrative processing, idea submission, and platform maintenance.</p>
                     <p className="font-medium">Important Payment Conditions:</p>
                     <ul className="list-disc list-inside ml-4 space-y-1">
                       <li>All payments are strictly non-refundable under normal circumstances</li>
@@ -118,9 +118,9 @@ export default function TermsPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-[#7303c0] mb-2">3.3 Payment Gateway</h3>
+                  <h3 className="text-lg font-semibold text-[#7303c0] mb-2">3.3 Payment Processing</h3>
                   <div className="space-y-2">
-                    <p>All payments are processed securely through Razorpay.</p>
+                    <p>All payments are processed securely through our payment platform.</p>
                     <p>The organizing committee and Gen 201 team are not responsible for:</p>
                     <ul className="list-disc list-inside ml-4 space-y-1">
                       <li>Technical issues during payment</li>
@@ -128,7 +128,7 @@ export default function TermsPage() {
                       <li>Payment delays</li>
                       <li>Duplicate payments</li>
                     </ul>
-                    <p>These issues may arise from either Razorpay or the participant&apos;s banking provider.</p>
+                    <p>These issues may arise from either the payment platform or the participant&apos;s banking provider.</p>
                   </div>
                 </div>
 

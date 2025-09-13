@@ -132,6 +132,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-orbitron), system-ui, arial, sans-serif;
+    font-display: swap;
+  }
+  
+  .font-orbitron {
+    font-family: var(--font-orbitron), system-ui, arial, sans-serif;
+    font-display: swap;
   }
 }
 
@@ -148,6 +155,38 @@
   
   .border-gradient {
     border-image: linear-gradient(45deg, #7303c0, #928dab) 1;
+  }
+  
+  /* Performance optimizations */
+  .gpu-accelerated {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+  }
+  
+  .neural-glow {
+    animation: quantumGlow 3s ease-in-out infinite;
+  }
+  
+  .data-flow {
+    animation: dataFlow 4s linear infinite;
+  }
+  
+  .neural-pulse {
+    animation: neuralPulse 2s ease-in-out infinite;
+  }
+  
+  /* Modern glassmorphism effect */
+  .glass-morphism {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(115, 3, 192, 0.2);
+  }
+  
+  /* Optimized text rendering */
+  .text-optimized {
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -225,14 +264,39 @@
   background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
 }
 
-/* Optimized Neural Network Animation */
+/* Enhanced Neural Network Effects */
+@keyframes neuralPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes dataFlow {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+}
+
 @keyframes nodeGlow {
   0%, 100% {
     transform: scale3d(1, 1, 1);
-    opacity: 0.7;
+    opacity: 0.6;
   }
   50% {
-    transform: scale3d(1.2, 1.2, 1);
+    transform: scale3d(1.3, 1.3, 1);
     opacity: 0.9;
   }
 }
@@ -240,14 +304,23 @@
 @keyframes pathFlow {
   0% {
     stroke-dashoffset: 200;
-    opacity: 0.4;
+    opacity: 0.3;
   }
   50% {
-    opacity: 0.7;
+    opacity: 0.8;
   }
   100% {
     stroke-dashoffset: 0;
-    opacity: 0.4;
+    opacity: 0.3;
+  }
+}
+
+@keyframes quantumGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(115, 3, 192, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(115, 3, 192, 0.6), 0 0 30px rgba(146, 141, 171, 0.3);
   }
 }
 

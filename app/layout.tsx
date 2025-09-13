@@ -9,9 +9,10 @@ import { Analytics } from '@vercel/analytics/react';
 const orbitron = Orbitron({ 
   subsets: ['latin'],
   variable: '--font-orbitron',
-  weight: ['400', '700', '900'],
+  weight: ['400', '500', '600', '700', '800', '900'],
   display: 'swap',
-  fallback: ['system-ui', 'arial']
+  preload: true,
+  fallback: ['system-ui', 'arial', 'sans-serif']
 });
 
 const rajdhani = Rajdhani({ 
@@ -39,7 +40,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${orbitron.variable} ${rajdhani.variable} font-orbitron bg-black text-white`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body className={`${orbitron.variable} ${rajdhani.variable} font-orbitron bg-black text-white text-optimized`}>
         <LoadingProvider>
           <NavigationProvider>
             {children}

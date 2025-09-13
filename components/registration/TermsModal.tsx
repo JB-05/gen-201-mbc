@@ -29,7 +29,7 @@ export function TermsModal() {
 
           <section>
             <h3 className="text-lg font-bold text-[#7303c0] mb-2">Purpose of Payment</h3>
-            <p>The fee of ₹50 (plus applicable Razorpay commission/extra charges) is solely collected for the purpose of administrative processing and idea submission.</p>
+            <p>The fee of ₹50 (plus applicable platform processing fees) is collected for administrative processing, idea submission, and platform maintenance.</p>
             <p className="mt-2 text-sm">This payment does not guarantee selection into the offline hackathon round, nor does it provide any priority or preference in evaluation.</p>
           </section>
 
@@ -43,9 +43,9 @@ export function TermsModal() {
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-[#7303c0] mb-2">Payment Gateway Disclaimer</h3>
-            <p>All payments are processed securely through Razorpay.</p>
-            <p className="mt-2 text-sm">The Organizing Committee, Department of AI, Mar Baselios Christian College of Engineering and Technology, Kuttikanam, and the Gen 201 Team shall not be responsible for technical issues, transaction failures, delays, or duplicate payments caused by the Razorpay platform or the participant&apos;s banking/payment provider.</p>
+            <h3 className="text-lg font-bold text-[#7303c0] mb-2">Payment Processing Disclaimer</h3>
+            <p>All payments are processed securely through our payment platform.</p>
+            <p className="mt-2 text-sm">The Organizing Committee, Department of AI, Mar Baselios Christian College of Engineering and Technology, Kuttikanam, and the Gen 201 Team shall not be responsible for technical issues, transaction failures, delays, or duplicate payments caused by the payment platform or the participant&apos;s banking/payment provider.</p>
           </section>
 
           <section>
