@@ -61,7 +61,7 @@ export default function TermsPage() {
 
           <div className="bg-black/30 backdrop-blur-sm border border-[#7303c0]/20 p-6 md:p-8 rounded-lg space-y-8">
             {/* Section 1: Eligibility */}
-            <section>
+            <section id="eligibility">
               <h2 className="text-2xl font-orbitron font-bold text-[#7303c0] mb-4">1. Eligibility</h2>
               <div className="space-y-2 text-[#928dab]">
                 <p>Open to Higher Secondary students (Classes 11–12) currently enrolled in schools in Kerala.</p>

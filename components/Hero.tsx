@@ -63,7 +63,7 @@ export default function Hero() {
       
       {/* Simplified Animated Overlay */}
       <div 
-        className="absolute inset-0 opacity-20 will-change-transform"
+        className="absolute inset-0 opacity-20 will-change-transform z-5"
         style={{
           background: 'linear-gradient(45deg, transparent 30%, rgba(115, 3, 192, 0.1) 50%, transparent 70%)',
           backgroundSize: '300% 300%',
@@ -72,7 +72,7 @@ export default function Hero() {
         }}
       ></div>
       
-      <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
+      <div className="max-w-4xl mx-auto text-center px-4 relative z-30">
         <div className="mb-8">
           <div className="flex justify-center mb-4">
             <Image
@@ -108,20 +108,26 @@ export default function Hero() {
               <span className="text-green-500 text-sm font-medium">Registration Ongoing</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <NavigationLink
-                href="/terms#eligibility"
-                className="bg-[#7303c0] text-white px-3 sm:px-5 py-1.5 sm:py-2 clip-arrow font-orbitron font-bold text-xs hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
-                variant="button"
+              {/* Test buttons with simple onClick handlers */}
+              <button
+                onClick={() => {
+                  console.log('CHECK ELIGIBILITY clicked');
+                  window.open('/terms#eligibility', '_self');
+                }}
+                className="bg-[#7303c0] text-white px-3 sm:px-5 py-1.5 sm:py-2 clip-arrow font-orbitron font-bold text-xs hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 cursor-pointer"
               >
                 CHECK ELIGIBILITY
-              </NavigationLink>
-              <NavigationLink
-                href="https://app.makemypass.com/event/gen-201"
-                className="inline-block bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm sm:text-base hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 relative animate-pulse-subtle"
+              </button>
+              <button
+                onClick={() => {
+                  console.log('REGISTER NOW clicked');
+                  window.open('https://app.makemypass.com/event/gen-201', '_blank', 'noopener,noreferrer');
+                }}
+                className="inline-block bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm sm:text-base hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 relative animate-pulse-subtle cursor-pointer"
               >
                 REGISTER NOW
-                <span className="absolute inset-0 border-2 border-[#7303c0] clip-arrow animate-ping-slow opacity-75"></span>
-              </NavigationLink>
+                <span className="absolute inset-0 border-2 border-[#7303c0] clip-arrow animate-ping-slow opacity-75 pointer-events-none"></span>
+              </button>
             </div>
           </div>
 

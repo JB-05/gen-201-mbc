@@ -43,3 +43,4 @@ CREATE POLICY "Admin delete districts" ON public.districts
 
 
 
+

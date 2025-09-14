@@ -24,15 +24,27 @@ export function NavigationLink({
   const handleClick = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     
+    console.log('NavigationLink clicked:', href); // Debug log
+    
     // Execute any additional onClick handler
     onClick?.();
     
-    // Show loading screen
-    setIsLoading(true);
+    // Check if it's an external URL
+    const isExternal = href.startsWith('http://') || href.startsWith('https://');
     
-    // Small delay to ensure loading screen appears
-    await new Promise(resolve => setTimeout(resolve, 50));
-    router.push(href);
+    if (isExternal) {
+      console.log('Opening external URL:', href); // Debug log
+      // For external URLs, open in new tab
+      window.open(href, '_blank', 'noopener,noreferrer');
+    } else {
+      console.log('Navigating to internal URL:', href); // Debug log
+      // For internal URLs, show loading screen and navigate
+      setIsLoading(true);
+      
+      // Small delay to ensure loading screen appears
+      await new Promise(resolve => setTimeout(resolve, 50));
+      router.push(href);
+    }
   };
 
   const linkClassName = variant === 'button' 
