@@ -29,7 +29,7 @@ const Timeline: React.FC = () => {
       title: "REGISTRATION CLOSES",
       description: "Final call for participants. Prepare for evaluation.",
       time: "23:59",
-      date: "SEPT 25",
+      date: "OCT 3",
       icon: Calendar,
       status: 'upcoming'
     },
@@ -38,7 +38,7 @@ const Timeline: React.FC = () => {
       title: "SHORTLISTING PROCESS",
       description: "Team evaluation and selection process begins.",
       time: "12:00",
-      date: "SEPT 25",
+      date: "OCT 4",
       icon: Users,
       status: 'upcoming'
     },
@@ -47,7 +47,7 @@ const Timeline: React.FC = () => {
       title: "TEAMS ANNOUNCEMENT",
       description: "Selected teams will be announced and notified.",
       time: "18:00",
-      date: "SEPT 28",
+      date: "OCT 5",
       icon: Zap,
       status: 'upcoming'
     },
@@ -90,7 +90,7 @@ const Timeline: React.FC = () => {
           // Special handling for registration status
           if (event.id === 1) {
             // Registration is live until the closing date
-            const closingDate = new Date(year, 8, 20, 23, 59); // Sept 20, 23:59
+            const closingDate = new Date(year, 9, 3, 23, 59); // Oct 3, 23:59
             if (now < closingDate) {
               return { ...event, status: 'live' };
             }
