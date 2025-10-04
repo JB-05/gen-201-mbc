@@ -12,7 +12,7 @@ CREATE TABLE payments (
     order_id VARCHAR(100) NOT NULL UNIQUE,
     payment_id VARCHAR(100) UNIQUE, -- Razorpay payment ID (null for pending payments)
     signature VARCHAR(200), -- Razorpay signature for verification
-    amount INTEGER NOT NULL DEFAULT 5000, -- Amount in paise (₹50 = 5000 paise)
+    amount INTEGER NOT NULL DEFAULT 35000, -- Amount in paise (₹350 = 35000 paise)
     currency VARCHAR(3) DEFAULT 'INR',
     payment_status payment_status_type DEFAULT 'pending',
     payment_method VARCHAR(50), -- card, netbanking, upi, wallet, etc.

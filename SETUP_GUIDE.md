@@ -103,7 +103,7 @@ The application will be available at `http://localhost:3000`
 ## 6. Registration Flow
 
 1. **Team Registration**: User fills multi-step form
-2. **Payment**: ₹50 registration fee via Razorpay
+2. **Payment**: ₹350 registration fee via Razorpay
 3. **Verification**: Payment signature verification
 4. **Database Storage**: Complete registration data saved
 5. **Status Tracking**: Admin can review and update status

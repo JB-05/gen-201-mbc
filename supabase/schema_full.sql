@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS payments (
     order_id VARCHAR(100) NOT NULL UNIQUE,
     payment_id VARCHAR(100) UNIQUE,
     signature VARCHAR(200),
-    amount INTEGER NOT NULL DEFAULT 5000,
+    amount INTEGER NOT NULL DEFAULT 35000,
     currency VARCHAR(3) DEFAULT 'INR',
     payment_status payment_status_type DEFAULT 'pending',
     payment_method VARCHAR(50),
@@ -702,7 +702,7 @@ INSERT INTO districts (name, display_order, is_active) VALUES
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO configuration (key, value, description) VALUES
-    ('registration_fee', '50', 'Registration fee in rupees'),
+    ('registration_fee', '350', 'Registration fee in rupees'),
     ('currency', 'INR', 'Default currency'),
     ('max_team_members', '4', 'Maximum team members including lead'),
     ('min_team_members', '2', 'Minimum team members including lead'),

@@ -105,7 +105,7 @@ export default function TermsPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-[#7303c0] mb-2">3.2 Payment Terms</h3>
                   <div className="space-y-2">
-                    <p>The registration fee is ₹50 (plus applicable platform processing fees).</p>
+                    <p>The registration fee is ₹350 (plus applicable platform processing fees).</p>
                     <p>This fee is collected for administrative processing, idea submission, and platform maintenance.</p>
                     <p className="font-medium">Important Payment Conditions:</p>
                     <ul className="list-disc list-inside ml-4 space-y-1">

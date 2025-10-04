@@ -29,7 +29,7 @@ export function TermsModal() {
 
           <section>
             <h3 className="text-lg font-bold text-[#7303c0] mb-2">Purpose of Payment</h3>
-            <p>The fee of ₹50 (plus applicable platform processing fees) is collected for administrative processing, idea submission, and platform maintenance.</p>
+            <p>The fee of ₹350 (plus applicable platform processing fees) is collected for administrative processing, idea submission, and platform maintenance.</p>
             <p className="mt-2 text-sm">This payment does not guarantee selection into the offline hackathon round, nor does it provide any priority or preference in evaluation.</p>
           </section>
 

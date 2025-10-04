@@ -72,7 +72,7 @@ export default function RegisterPage() {
               Registration is now handled through our official platform. You will be redirected to complete your registration.
             </p>
             <p className="mb-6 text-sm">
-              The registration fee is ₹50 (plus applicable platform processing fees) for administrative processing and idea submission.
+              The registration fee is ₹350 (plus applicable platform processing fees) for administrative processing and idea submission.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a

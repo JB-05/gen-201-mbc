@@ -348,14 +348,14 @@ export function PaymentInsights() {
     {
       title: 'Pending Payments',
       count: paymentStats.pendingPayments,
-      amount: paymentStats.pendingPayments * 50, // Assuming 50 rupees per payment
+      amount: paymentStats.pendingPayments * 350, // Assuming 350 rupees per payment
       color: 'yellow',
       icon: AlertCircle
     },
     {
       title: 'Failed Payments',
       count: paymentStats.failedPayments,
-      amount: paymentStats.failedPayments * 50, // Assuming 50 rupees per payment
+      amount: paymentStats.failedPayments * 350, // Assuming 350 rupees per payment
       color: 'red',
       icon: AlertCircle
     }

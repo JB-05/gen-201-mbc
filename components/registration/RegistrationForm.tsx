@@ -822,7 +822,7 @@ export function RegistrationForm() {
                   I agree to the <TermsModal /> and acknowledge that:
                   <ul className="mt-2 ml-4 space-y-1 list-disc">
                     <li>I am a student of Class 11 or 12</li>
-                    <li>The registration fee of ₹50 is non-refundable</li>
+                    <li>The registration fee of ₹350 is non-refundable</li>
                     <li>Payment does not guarantee selection for the offline hackathon</li>
                     <li>I am responsible for informing my team members about these terms</li>
                   </ul>
@@ -867,7 +867,7 @@ export function RegistrationForm() {
               ) : !isRazorpayLoaded ? (
                 'Payment System Not Ready'
               ) : (
-                'Pay ₹50 & Register'
+                'Pay ₹350 & Register'
               )}
             </span>
           </Button>

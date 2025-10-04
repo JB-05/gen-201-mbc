@@ -20,7 +20,7 @@ ON CONFLICT (name) DO NOTHING;
 
 -- Insert configuration data if not exists
 INSERT INTO configuration (key, value, description) VALUES
-    ('registration_fee', '50', 'Registration fee in rupees'),
+    ('registration_fee', '350', 'Registration fee in rupees'),
     ('currency', 'INR', 'Default currency'),
     ('max_team_members', '4', 'Maximum team members including lead'),
     ('min_team_members', '2', 'Minimum team members including lead'),

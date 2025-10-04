@@ -54,7 +54,7 @@ export async function getActiveDistricts(): Promise<District[]> {
 }
 
 export async function getRegistrationFee(): Promise<number> {
-    const fee = await getConfigValue('registration_fee', '50');
+    const fee = await getConfigValue('registration_fee', '350');
     return parseInt(fee, 10);
 }
 
