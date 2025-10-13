@@ -1,22 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Calendar, Users, Trophy } from 'lucide-react';
+import { Calendar, Users, Trophy } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
-export default function EventClosedPage() {
+export default function Home() {
   return (
-    <main className="min-h-screen bg-black pt-24 pb-16 relative overflow-hidden">
-      {/* Back to Home Button */}
-      <div className="absolute top-8 left-8 z-20">
-        <Link 
-          href="/" 
-          className="flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm border border-[#7303c0] 
-                     rounded-lg text-[#928dab] hover:text-white hover:bg-[#7303c0] transition-all duration-300
-                     hover:scale-105 group"
-        >
-          <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-          <span className="font-orbitron">Back to Home</span>
-        </Link>
-      </div>
+    <main className="min-h-screen text-white">
+      <Navbar />
+      <div className="bg-black pt-16 pb-16 relative overflow-hidden">
 
       {/* Animated Background Grid */}
       <div className="absolute inset-0 opacity-20">
@@ -161,25 +153,13 @@ export default function EventClosedPage() {
               <div className="inline-block bg-gray-600 text-white px-6 py-3 clip-arrow font-orbitron font-bold text-sm cursor-not-allowed opacity-60">
                 REGISTRATION CLOSED
               </div>
-              <Link
-                href="/"
-                className="inline-block bg-transparent text-[#7303c0] px-6 py-3 border border-[#7303c0] font-orbitron font-bold text-sm hover:bg-[#7303c0] hover:text-white transition-all duration-300 transform hover:scale-105"
-              >
-                BACK TO HOME
-              </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="relative z-10 mt-12">
-        <div className="border-t border-[#7303c0]/20 pt-8">
-          <div className="text-center text-[#928dab] text-sm">
-            <p>&copy; 2025 GEN 201. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
+      </div>
     </main>
   );
 }
