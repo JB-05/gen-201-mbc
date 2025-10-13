@@ -22,7 +22,7 @@ const Timeline: React.FC = () => {
       time: "00:00",
       date: "SEPT 10",
       icon: Users,
-      status: 'live'
+      status: 'completed'
     },
     {
       id: 2,
@@ -31,7 +31,7 @@ const Timeline: React.FC = () => {
       time: "23:59",
       date: "OCT 3",
       icon: Calendar,
-      status: 'upcoming'
+      status: 'completed'
     },
     {
       id: 3,
@@ -40,7 +40,7 @@ const Timeline: React.FC = () => {
       time: "12:00",
       date: "OCT 4",
       icon: Users,
-      status: 'upcoming'
+      status: 'completed'
     },
     {
       id: 4,
@@ -49,7 +49,7 @@ const Timeline: React.FC = () => {
       time: "18:00",
       date: "OCT 5",
       icon: Zap,
-      status: 'upcoming'
+      status: 'completed'
     },
     {
       id: 5,
@@ -58,7 +58,7 @@ const Timeline: React.FC = () => {
       time: "00:00",
       date: "OCT 10",
       icon: Code,
-      status: 'upcoming'
+      status: 'completed'
     },
     {
       id: 6,
@@ -67,60 +67,18 @@ const Timeline: React.FC = () => {
       time: "23:59",
       date: "OCT 11",
       icon: Trophy,
-      status: 'upcoming'
+      status: 'completed'
     }
   ]);
 
   useEffect(() => {
-    const updateEventStatuses = () => {
-      const now = new Date();
-      const year = 2025;
-
-      setTimelineEvents(prevEvents => 
-        prevEvents.map(event => {
-          const [month, day] = event.date.split(' ');
-          const [hours, minutes] = event.time.split(':');
-          const eventDate = new Date(year, 
-            month === 'SEPT' ? 8 : 9, 
-            parseInt(day), 
-            parseInt(hours), 
-            parseInt(minutes)
-          );
-
-          // Special handling for registration status
-          if (event.id === 1) {
-            // Registration is live until the closing date
-            const closingDate = new Date(year, 9, 3, 23, 59); // Oct 3, 23:59
-            if (now < closingDate) {
-              return { ...event, status: 'live' };
-            }
-          }
-
-          // Event is in the past
-          if (now > eventDate) {
-            return { ...event, status: 'completed' };
-          }
-          
-          // Event is currently happening (within 24 hours)
-          const timeDiff = eventDate.getTime() - now.getTime();
-          const hoursDiff = timeDiff / (1000 * 60 * 60);
-          if (hoursDiff <= 24 && hoursDiff >= 0) {
-            return { ...event, status: 'current' };
-          }
-          
-          // Event is in the future
-          return { ...event, status: 'upcoming' };
-        })
-      );
-    };
-
-    // Update initially
-    updateEventStatuses();
-
-    // Update every minute
-    const interval = setInterval(updateEventStatuses, 60000);
-
-    return () => clearInterval(interval);
+    // Since the event has ended, mark all events as completed
+    setTimelineEvents(prevEvents => 
+      prevEvents.map(event => ({
+        ...event,
+        status: 'completed' as const
+      }))
+    );
   }, []);
 
   return (

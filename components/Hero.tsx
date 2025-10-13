@@ -104,8 +104,8 @@ export default function Hero() {
         <div className="space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-center space-x-2">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-              <span className="text-green-500 text-sm font-medium">Registration Ongoing</span>
+              <div className="w-2 h-2 rounded-full bg-red-500"></div>
+              <span className="text-red-500 text-sm font-medium">Registration Closed</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               {/* Test buttons with simple onClick handlers */}
@@ -120,13 +120,13 @@ export default function Hero() {
               </button>
               <button
                 onClick={() => {
-                  console.log('REGISTER NOW clicked');
+                  console.log('EVENT COMPLETED clicked');
                   window.open('https://app.makemypass.com/event/gen-201', '_blank', 'noopener,noreferrer');
                 }}
-                className="inline-block bg-[#7303c0] text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm sm:text-base hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105 relative animate-pulse-subtle cursor-pointer"
+                className="inline-block bg-gray-600 text-white px-4 sm:px-6 py-2 sm:py-3 clip-arrow font-orbitron font-bold text-sm sm:text-base cursor-not-allowed opacity-60"
+                disabled
               >
-                REGISTER NOW
-                <span className="absolute inset-0 border-2 border-[#7303c0] clip-arrow animate-ping-slow opacity-75 pointer-events-none"></span>
+                EVENT COMPLETED
               </button>
             </div>
           </div>

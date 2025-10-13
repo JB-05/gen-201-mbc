@@ -67,22 +67,17 @@ export default function RegisterPage() {
         {/* Redirect Message */}
         <div className="relative">
           <div className="text-center text-[#928dab] mb-6 max-w-2xl mx-auto backdrop-blur-sm py-8 px-6 rounded-lg border border-[#7303c0]/20">
-            <h2 className="text-xl font-orbitron text-[#7303c0] mb-4">Registration Redirect</h2>
+            <h2 className="text-xl font-orbitron text-red-500 mb-4">Registration Closed</h2>
             <p className="mb-4">
-              Registration is now handled through our official platform. You will be redirected to complete your registration.
+              Thank you for your interest in GEN 201! Registration for this event has ended.
             </p>
             <p className="mb-6 text-sm">
-              The registration fee is ₹350 (plus applicable platform processing fees) for administrative processing and idea submission.
+              The event has been completed. Stay tuned for future events and announcements.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href="https://app.makemypass.com/event/gen-201"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-[#7303c0] text-white px-6 py-3 clip-arrow font-orbitron font-bold text-sm hover:bg-[#928dab] transition-all duration-300 transform hover:scale-105"
-              >
-                CONTINUE TO REGISTRATION
-              </a>
+              <div className="inline-block bg-gray-600 text-white px-6 py-3 clip-arrow font-orbitron font-bold text-sm cursor-not-allowed opacity-60">
+                REGISTRATION CLOSED
+              </div>
               <Link
                 href="/"
                 className="inline-block bg-transparent text-[#7303c0] px-6 py-3 border border-[#7303c0] font-orbitron font-bold text-sm hover:bg-[#7303c0] hover:text-white transition-all duration-300 transform hover:scale-105"

@@ -16,7 +16,7 @@ export default function FAQ() {
     },
     {
       question: 'What is the registration process?',
-      answer: 'Registration opens on September 1st. Simply fill out the online form with your team details, project ideas, and member information. Registration closes on September 20th.'
+      answer: 'Registration for GEN 201 has ended. The event was completed successfully. Thank you to all participants who registered!'
     },
     {
       question: 'Do I need to have a team before registering?',
